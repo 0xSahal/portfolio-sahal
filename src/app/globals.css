@@ -1,26 +1,168 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+@config '../../tailwind.config.ts';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+/* ─── Light mode (default) — "warm paper" ─────────────────────────── */
+:root,
+[data-theme='light'] {
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-fraunces);
+
+  --bg: #f7f5ef; /* paper */
+  --bg-secondary: #efece2; /* sunken surface */
+  --surface: #ffffff; /* cards */
+  --surface-elevated: #ffffff;
+
+  --text-primary: #1a1814; /* ink */
+  --text-secondary: #6e6a5e; /* stone */
+  --text-muted: #9b978b;
+
+  --accent: #c5852c; /* signal — honey amber */
+  --accent-strong: #a86e1e; /* hover / pressed */
+  --accent-soft: #f3e8d3; /* tinted fill */
+
+  --on-accent: #2a1c06; /* text on amber fills */
+  --on-ink: #f7f5ef; /* text on ink buttons */
+
+  --border: #e3dfd5;
+  --border-strong: #d4cfc2;
+
+  --ring: var(--accent);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Dark mode — "warm black" ────────────────────────────────────── */
+[data-theme='dark'] {
+  --bg: #141310;
+  --bg-secondary: #1a1813;
+  --surface: #1f1d18;
+  --surface-elevated: #24221c;
+
+  --text-primary: #f2eee4;
+  --text-secondary: #a39e90;
+  --text-muted: #7a7468;
+
+  --accent: #d8a24a; /* nudged brighter for contrast on dark */
+  --accent-strong: #e5b362;
+  --accent-soft: #2e2718;
+
+  --on-accent: #1a1208;
+  --on-ink: #f2eee4;
+
+  --border: #2e2b24;
+  --border-strong: #3a362d;
+
+  --ring: var(--accent);
+}
+
+/* ─── Base ────────────────────────────────────────────────────────── */
+/* NOTE: no universal `* { margin:0; padding:0 }` reset here — Tailwind's
+   preflight handles resets inside @layer. An unlayered universal reset would
+   override every padding/margin utility (mx-auto, px-*, py-*) site-wide. */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  line-height: 1.6;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+::selection {
+  background-color: var(--accent-soft);
+  color: var(--text-primary);
+}
+
+/* Micro-typography: balanced headings, no paragraph orphans */
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+}
+
+/* Animated underline for inline nav links */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s ease;
+}
+.link-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Brand wordmark cursor — blinks a few times on page load, then rests solid.
+   The reduced-motion block below neutralizes it (stays solid). */
+@keyframes cursor-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+.cursor-blink {
+  animation: cursor-blink 0.85s step-end 0.3s 4;
+}
+
+/* Keyboard focus — uses the signal accent */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Subtle scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Respect reduced-motion — disable smooth scroll + reveal transitions */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
