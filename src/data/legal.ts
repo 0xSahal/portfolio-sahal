@@ -23,7 +23,7 @@ const email = siteConfig.contact.email;
 const emailLink = `[${email}](mailto:${email})`;
 
 // Keep this in sync when the policies change. Format: Month D, YYYY.
-const LAST_UPDATED = 'June 26, 2026';
+const LAST_UPDATED = 'June 27, 2026';
 
 export const privacyDoc: LegalDocument = {
   title: 'Privacy Policy',
@@ -102,7 +102,7 @@ export const privacyDoc: LegalDocument = {
       blocks: [
         {
           type: 'p',
-          text: 'I do not use advertising or tracking cookies. If you switch between light and dark mode, that preference is saved in your browser so the site remembers it next time. If you open the Calendly scheduler, Calendly may set its own cookies to make booking work.',
+          text: 'This site uses a cookie consent banner (CookieYes) to remember your cookie preferences. Google Analytics runs only if you accept analytics cookies. If you switch between light and dark mode, that preference is saved in your browser so the site remembers it next time. If you open the Calendly scheduler, Calendly may set its own cookies to make booking work. You can change your cookie choices anytime from the banner or the cookie settings link in the site footer.',
         },
       ],
     },
