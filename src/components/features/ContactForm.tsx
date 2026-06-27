@@ -11,6 +11,10 @@ import {
   type ContactFormData,
 } from '@/lib/validations';
 import { siteConfig } from '@/config/site';
+import { useReCaptcha } from '@/components/features/ReCaptchaProvider';
+
+const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? '';
+const CONTACT_RECAPTCHA_ACTION = 'contact_submit';
 
 const field =
   'w-full rounded-input border border-border bg-surface px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30 transition-colors';
@@ -34,6 +38,7 @@ interface ContactFormProps {
 export default function ContactForm({ onPreferCall }: ContactFormProps = {}) {
   const [done, setDone] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const { ready: recaptchaReady, executeRecaptcha } = useReCaptcha();
 
   const {
     register,
@@ -48,11 +53,26 @@ export default function ContactForm({ onPreferCall }: ContactFormProps = {}) {
 
   const onSubmit = async (data: ContactFormData) => {
     setServerError(null);
+
+    let recaptchaToken: string | undefined;
+    if (RECAPTCHA_SITE_KEY) {
+      if (!recaptchaReady) {
+        setServerError('Verification is still loading. Please try again in a moment.');
+        return;
+      }
+      const token = await executeRecaptcha(CONTACT_RECAPTCHA_ACTION);
+      if (!token) {
+        setServerError('Verification failed. Please try again.');
+        return;
+      }
+      recaptchaToken = token;
+    }
+
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, recaptchaToken }),
       });
       if (!res.ok) {
         const json = await res.json().catch(() => null);
@@ -238,6 +258,29 @@ export default function ContactForm({ onPreferCall }: ContactFormProps = {}) {
           I personally read every brief and reply within 24 hours.
         </p>
       </div>
+      {RECAPTCHA_SITE_KEY && (
+        <p className="text-text-muted mt-4 text-[11px] leading-relaxed">
+          This site is protected by reCAPTCHA and the Google{' '}
+          <a
+            href="https://policies.google.com/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-text-secondary underline underline-offset-2"
+          >
+            Privacy Policy
+          </a>{' '}
+          and{' '}
+          <a
+            href="https://policies.google.com/terms"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-text-secondary underline underline-offset-2"
+          >
+            Terms of Service
+          </a>{' '}
+          apply.
+        </p>
+      )}
     </form>
   );
 }

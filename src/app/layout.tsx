@@ -6,6 +6,7 @@ import { siteConfig } from '@/config/site';
 import { rootJsonLd } from '@/lib/seo';
 import JsonLd from '@/components/seo/JsonLd';
 import CookieYesBanner from '@/components/features/CookieYesBanner';
+import { ReCaptchaProvider } from '@/components/features/ReCaptchaProvider';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import '@/app/globals.css';
 
@@ -112,7 +113,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <ReCaptchaProvider>{children}</ReCaptchaProvider>
         </ThemeProvider>
         {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
       </body>
