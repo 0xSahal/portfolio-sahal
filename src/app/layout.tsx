@@ -5,6 +5,7 @@ import { ThemeProvider } from 'next-themes';
 import { siteConfig } from '@/config/site';
 import { rootJsonLd } from '@/lib/seo';
 import JsonLd from '@/components/seo/JsonLd';
+import CookieYesBanner from '@/components/features/CookieYesBanner';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import '@/app/globals.css';
 
@@ -103,6 +104,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <body>
+        <CookieYesBanner />
         <JsonLd data={rootJsonLd()} />
         <ThemeProvider
           attribute="data-theme"
