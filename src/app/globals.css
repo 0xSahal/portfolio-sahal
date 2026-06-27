@@ -166,3 +166,8 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* reCAPTCHA v3 badge — hidden per Google policy when disclosure is shown in the contact form. */
+.grecaptcha-badge {
+  visibility: hidden;
+}

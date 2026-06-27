@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { contactSchema } from '@/lib/validations';
 import { sendLeadNotification } from '@/lib/email';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { isRecaptchaEnabled, verifyRecaptchaToken } from '@/lib/recaptcha';
+
+const CONTACT_RECAPTCHA_ACTION = 'contact_submit';
 
 export async function POST(request: Request) {
   const ip = getClientIp(request);
@@ -29,11 +32,28 @@ export async function POST(request: Request) {
     );
   }
 
-  const data = parsed.data;
+  const { recaptchaToken, website, ...data } = parsed.data;
 
   // Honeypot — silently accept bots without doing anything.
-  if (data.website) {
+  if (website) {
     return NextResponse.json({ ok: true });
+  }
+
+  if (isRecaptchaEnabled()) {
+    if (!recaptchaToken) {
+      return NextResponse.json(
+        { ok: false, error: 'Verification failed. Please try again.' },
+        { status: 422 },
+      );
+    }
+
+    const verification = await verifyRecaptchaToken(recaptchaToken, CONTACT_RECAPTCHA_ACTION);
+    if (!verification.ok) {
+      return NextResponse.json(
+        { ok: false, error: 'Verification failed. Please try again.' },
+        { status: 403 },
+      );
+    }
   }
 
   // Persist the lead (best-effort — needs MONGODB_URI).

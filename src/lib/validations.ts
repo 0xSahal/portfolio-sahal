@@ -22,6 +22,8 @@ export const contactSchema = z.object({
   message: z.string().max(2000).trim().optional(),
   // Honeypot — bots fill it, humans don't.
   website: z.string().max(0).optional(),
+  // Google reCAPTCHA v3 token (set on submit when keys are configured).
+  recaptchaToken: z.string().min(1).optional(),
 });
 
 export type ContactFormData = z.infer<typeof contactSchema>;
