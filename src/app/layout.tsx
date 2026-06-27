@@ -5,6 +5,7 @@ import { ThemeProvider } from 'next-themes';
 import { siteConfig } from '@/config/site';
 import { rootJsonLd } from '@/lib/seo';
 import JsonLd from '@/components/seo/JsonLd';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import '@/app/globals.css';
 
 const fraunces = Fraunces({
@@ -111,6 +112,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           {children}
         </ThemeProvider>
+        {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
       </body>
     </html>
   );
