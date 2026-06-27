@@ -2,12 +2,12 @@ import type { NextConfig } from 'next';
 
 const ContentSecurityPolicy = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://assets.calendly.com",
+  "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://assets.calendly.com https://www.googletagmanager.com",
   "style-src 'self' 'unsafe-inline' https://assets.calendly.com",
   "img-src 'self' data: blob: https:",
   "media-src 'self' blob:",
   "font-src 'self'",
-  "connect-src 'self' https://api.resend.com https://*.mongodb.net https://*.sanity.io https://*.api.sanity.io https://*.apicdn.sanity.io wss://*.api.sanity.io https://calendly.com",
+  "connect-src 'self' https://api.resend.com https://*.mongodb.net https://*.sanity.io https://*.api.sanity.io https://*.apicdn.sanity.io wss://*.api.sanity.io https://calendly.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com",
   'frame-src https://calendly.com',
   "frame-ancestors 'none'",
 ].join('; ');

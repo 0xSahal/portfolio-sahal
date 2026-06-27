@@ -79,7 +79,7 @@ Defined in `src/app/globals.css` (CSS variables) + `tailwind.config.ts` (token m
 ```
 src/app/
   layout.tsx              # root: fonts, ThemeProvider, metadata (driven by siteConfig)
-  (portfolio)/            # route group with Navbar + Footer + MobileCtaBar shell
+  (portfolio)/            # route group with Navbar + Footer + MobileCtaBar + WhatsAppButton shell
     layout.tsx            # the visible chrome
     page.tsx              # homepage — composes sections in conversion order
     work|services|about|contact|blog/  # inner pages
@@ -89,7 +89,7 @@ src/components/
   sections/               # one file per page section (Hero, Services, FeaturedWork,
                           #   Trajectory, Showcase, LatestPosts, VideoTestimonials, ...)
   features/               # ThemeToggle, ContactForm, ContactTabs, CalendlyWidget,
-                          #   AwardsGallery
+                          #   AwardsGallery, WhatsAppButton (floating chat button, all pages)
   seo/                    # JsonLd (inlines <script type="application/ld+json">)
   ui/                     # the primitives above
 src/config/   site.ts (brand/identity), navigation.ts (nav + primaryCta)
@@ -277,7 +277,7 @@ Prompts live in data/markup, so they're easy to find and edit:
 - `/services` showcase band (mood imagery for strategy/build/launch) → `src/data/showcase.ts`
   (`servicesShowcase`). The `/work` showcase entries are now all real, no placeholders.
 - Product screenshots → `image` / `imagePrompt` on `src/data/products.ts`
-- Portrait & candid photos → still icon placeholders in Hero / AboutTeaser / About
+- Portrait & candid photos → now REAL photos in `/public/images/portraits/` (see Real assets below)
 
 ### Real assets already in the repo (NOT placeholders — don't anonymize or delete)
 
@@ -292,7 +292,13 @@ Prompts live in data/markup, so they're easy to find and edit:
   (MP4 screen recordings) for all four `/work` entries: Veylix, Fairpath, Vallorex, Foxera.
   Both still + motion versions per entry. The videos are heavy (~60 MB combined); re-encode
   with `ffmpeg -c:v libx264 -crf 28 -preset slow -vf scale=1280:-2 -an` before public launch
-  if they haven't been optimized yet.
+  if they haven't been optimized yet. (These videos currently load eagerly; see Roadmap.)
+- **Portraits** — `/public/images/portraits/`: real photos of Sahal. `sahal-hero` (homepage hero,
+  a temporary photo to be swapped for the founder intro video later), `sahal-candid` (homepage
+  "short version"), `sahal-services` (/services hero), `sahal-headshot` (/about portrait),
+  `sahal-desk` (/work hero). `sahal-candid-grey` is an unused alternate. Don't swap back to placeholders.
+- **Brand icon set** — `src/app/icon.png` (favicon), `src/app/apple-icon.png`, and
+  `public/icon-maskable.png`: the amber "S." tile, generated from one source. Referenced by `manifest.ts`.
 
 ### Content placeholders still to replace (clearly marked in code)
 
@@ -317,4 +323,11 @@ Not professionally reviewed legal advice; have a lawyer check before relying on 
 
 ## Roadmap / not yet built
 
+- **Lazy-load the `/work` case-study videos.** They are `<video autoPlay>` in `Showcase.tsx`
+  (`CaseMedia`), so all four (~63 MB) download eagerly when `/work` loads. Render the poster
+  first and only load/play each video when it scrolls into view (IntersectionObserver), pausing
+  off-screen. Re-encode the MP4s too (see Imagery).
+- Swap the homepage hero photo for the founder intro video when the edit is ready (`Hero.tsx`).
 - Multilingual (EN-only at launch; architecture intended to be i18n-ready later)
+
+The site is live at https://www.sahalshaikh.com (deployed on Vercel).
