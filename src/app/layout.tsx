@@ -17,7 +17,10 @@ const fraunces = Fraunces({
   style: ['normal', 'italic'],
 });
 
-const HEADLINE = `${siteConfig.name} | ${siteConfig.tagline}`;
+// Homepage title — includes role + audience so search results and social
+// previews say what Sahal does, not just the brand tagline. Inner pages keep
+// the brand-only template via `template` below.
+const HEADLINE = `${siteConfig.name} | Product Engineer for Founders & Small Teams`;
 
 export const viewport: Viewport = {
   width: 'device-width',
