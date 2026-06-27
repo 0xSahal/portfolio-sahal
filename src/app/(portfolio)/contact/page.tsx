@@ -32,11 +32,8 @@ export default function ContactPage() {
       />
       <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
         <div>
-          <p className="rounded-pill border-border bg-surface text-text-secondary inline-flex items-center gap-2.5 border px-3.5 py-1.5 text-sm">
-            <span className="relative flex h-2 w-2">
-              <span className="bg-accent absolute inline-flex h-full w-full animate-ping rounded-full opacity-60" />
-              <span className="bg-accent relative inline-flex h-2 w-2 rounded-full" />
-            </span>
+          <p className="text-text-muted flex items-center gap-3 text-sm">
+            <span aria-hidden className="bg-border-strong h-px w-8" />
             {siteConfig.availability}
           </p>
 

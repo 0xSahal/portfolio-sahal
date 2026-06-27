@@ -31,20 +31,9 @@ export default function Hero() {
 
       <Container className="relative grid items-center gap-12 pt-16 pb-20 md:grid-cols-[1.15fr_0.85fr] md:gap-16 md:pt-24 md:pb-28">
         <motion.div variants={container} initial="hidden" animate="show">
-          <motion.p
-            variants={item}
-            className="rounded-pill border-border bg-surface text-text-secondary inline-flex items-center gap-2.5 border px-3.5 py-1.5 text-sm"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="bg-accent absolute inline-flex h-full w-full animate-ping rounded-full opacity-60" />
-              <span className="bg-accent relative inline-flex h-2 w-2 rounded-full" />
-            </span>
-            {siteConfig.availability}
-          </motion.p>
-
           <motion.h1
             variants={item}
-            className="text-text-primary mt-7 max-w-[15ch] font-serif text-[2.75rem] leading-[1.04] font-medium tracking-tight sm:text-5xl md:text-[3.75rem]"
+            className="text-text-primary max-w-[16ch] font-serif text-[2.75rem] leading-[1.04] font-medium tracking-tight sm:text-5xl md:text-[3.75rem]"
           >
             You know what you want. <span className="text-accent">I build the path</span> to get
             there.
@@ -66,6 +55,14 @@ export default function Hero() {
             <CtaButton href="/work" variant="ghost" size="lg">
               See the work
             </CtaButton>
+          </motion.div>
+
+          <motion.div
+            variants={item}
+            className="text-text-muted mt-8 flex items-center gap-3 text-sm"
+          >
+            <span aria-hidden className="bg-border-strong h-px w-8" />
+            {siteConfig.availability}
           </motion.div>
         </motion.div>
 
