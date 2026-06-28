@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { GeistSans } from 'geist/font/sans';
-import { Fraunces } from 'next/font/google';
+import { Bricolage_Grotesque } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { siteConfig } from '@/config/site';
 import { rootJsonLd } from '@/lib/seo';
@@ -10,11 +10,14 @@ import { ReCaptchaProvider } from '@/components/features/ReCaptchaProvider';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import '@/app/globals.css';
 
-const fraunces = Fraunces({
+// Display face: Bricolage Grotesque — a distinctive, contemporary grotesque that
+// reads as "designed by a person", not the Fraunces/serif AI default. Variable
+// weights cover the full hierarchy. Loaded into --font-display (mapped to the
+// `font-serif` token in globals so existing markup picks it up site-wide).
+const display = Bricolage_Grotesque({
   subsets: ['latin'],
-  variable: '--font-fraunces',
+  variable: '--font-display',
   display: 'swap',
-  style: ['normal', 'italic'],
 });
 
 // Homepage title — includes role + audience so search results and social
@@ -104,7 +107,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${GeistSans.variable} ${fraunces.variable}`}
+      className={`${GeistSans.variable} ${display.variable}`}
       suppressHydrationWarning
     >
       <body>

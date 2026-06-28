@@ -23,7 +23,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
-        serif: ['var(--font-serif)', 'Georgia', 'serif'],
+        serif: ['var(--font-serif)', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         card: '14px',

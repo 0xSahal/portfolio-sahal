@@ -7,7 +7,7 @@
 :root,
 [data-theme='light'] {
   --font-sans: var(--font-geist-sans);
-  --font-serif: var(--font-fraunces);
+  --font-serif: var(--font-display);
 
   --bg: #f7f5ef; /* paper */
   --bg-secondary: #efece2; /* sunken surface */

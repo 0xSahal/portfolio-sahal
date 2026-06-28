@@ -2,6 +2,9 @@ import { cn } from '@/lib/utils';
 import Reveal from '@/components/ui/Reveal';
 
 interface SectionHeadingProps {
+  // `eyebrow` is accepted for backwards compatibility but intentionally NOT
+  // rendered. The repeated uppercase tracked kicker above every section is the
+  // single most recognizable AI/template tell; the display title carries it now.
   eyebrow?: string;
   title: React.ReactNode;
   intro?: string;
@@ -11,7 +14,6 @@ interface SectionHeadingProps {
 }
 
 export default function SectionHeading({
-  eyebrow,
   title,
   intro,
   align = 'left',
@@ -23,37 +25,17 @@ export default function SectionHeading({
     <Reveal className={className}>
       <div
         className={cn(
-          'flex flex-col gap-4',
+          'flex flex-col gap-5',
           centered ? 'items-center text-center' : 'items-start',
-          children && !centered && 'sm:flex-row sm:items-end sm:justify-between',
+          children && !centered && 'sm:flex-row sm:items-end sm:justify-between sm:gap-10',
         )}
       >
-        <div className={cn(centered && 'flex flex-col items-center')}>
-          {eyebrow && (
-            <div className={cn('flex items-center gap-2.5', centered && 'justify-center')}>
-              <span className="bg-accent h-px w-6" aria-hidden />
-              <span className="text-accent text-xs font-medium tracking-[0.16em] uppercase">
-                {eyebrow}
-              </span>
-            </div>
-          )}
-          <h2
-            className={cn(
-              'text-text-primary mt-4 font-serif text-3xl leading-[1.12] font-medium tracking-tight md:text-[2.5rem]',
-              centered ? 'max-w-2xl' : 'max-w-2xl',
-            )}
-          >
+        <div className={cn('max-w-2xl', centered && 'flex flex-col items-center')}>
+          <h2 className="text-text-primary font-serif text-[clamp(1.875rem,3.4vw,2.75rem)] leading-[1.1] font-semibold tracking-[-0.02em] text-balance">
             {title}
           </h2>
           {intro && (
-            <p
-              className={cn(
-                'text-text-secondary mt-4 text-lg leading-relaxed',
-                centered ? 'max-w-xl' : 'max-w-xl',
-              )}
-            >
-              {intro}
-            </p>
+            <p className="text-text-secondary mt-5 max-w-xl text-lg leading-relaxed">{intro}</p>
           )}
         </div>
         {children}
