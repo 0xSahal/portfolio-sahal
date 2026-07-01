@@ -1,16 +1,20 @@
-import Section from '@/components/ui/Section';
+import RailSection from '@/components/ui/RailSection';
 import Reveal from '@/components/ui/Reveal';
 
 export default function Problem() {
   return (
-    <Section containerClassName="max-w-3xl text-center">
-      <Reveal>
-        <h2 className="text-text-primary font-serif text-[1.75rem] leading-[1.18] font-medium tracking-tight sm:text-3xl md:text-[2.5rem]">
-          Most projects don&rsquo;t fail from bad code.
-          <br className="hidden sm:block" /> They fail from{' '}
+    <RailSection
+      index="01"
+      label="The problem"
+      title={
+        <>
+          Most projects don&rsquo;t fail from bad code. They fail from{' '}
           <span className="text-accent">no clear path.</span>
-        </h2>
-        <div className="text-text-secondary mx-auto mt-7 max-w-xl space-y-4 text-lg leading-relaxed">
+        </>
+      }
+    >
+      <Reveal delay={0.08}>
+        <div className="text-text-secondary mt-8 max-w-xl space-y-4 text-lg leading-relaxed">
           <p>
             You&rsquo;ve got the vision: maybe a deadline, maybe a half-built site and a developer
             who went quiet. What you don&rsquo;t have is someone who can take the whole thing off
@@ -22,6 +26,6 @@ export default function Problem() {
           </p>
         </div>
       </Reveal>
-    </Section>
+    </RailSection>
   );
 }

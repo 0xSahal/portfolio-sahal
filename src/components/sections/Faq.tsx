@@ -1,31 +1,27 @@
 import { Plus } from 'lucide-react';
-import Section from '@/components/ui/Section';
-import SectionHeading from '@/components/ui/SectionHeading';
+import RailSection from '@/components/ui/RailSection';
+import Reveal from '@/components/ui/Reveal';
 import { faqs } from '@/data/faq';
 
 export default function Faq() {
   return (
-    <Section containerClassName="max-w-3xl">
-      <SectionHeading
-        align="center"
-        eyebrow="FAQ"
-        title="Questions, answered."
-        className="mx-auto"
-      />
-
-      <div className="divide-border border-border mt-12 divide-y border-y">
-        {faqs.map((faq) => (
-          <details key={faq.id} className="group">
-            <summary className="text-text-primary hover:text-accent flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-left text-lg font-medium transition-colors [&::-webkit-details-marker]:hidden">
-              {faq.question}
-              <span className="border-border text-text-muted flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-transform duration-200 group-open:rotate-45">
-                <Plus size={15} />
-              </span>
-            </summary>
-            <p className="text-text-secondary pb-5 leading-relaxed">{faq.answer}</p>
-          </details>
-        ))}
-      </div>
-    </Section>
+    <RailSection index="07" label="Questions" title="Questions, answered.">
+      <Reveal delay={0.08}>
+        <div className="divide-border border-border mt-10 max-w-2xl divide-y border-y md:mt-12">
+          {faqs.map((faq) => (
+            <details key={faq.id} className="group">
+              <summary className="text-text-primary hover:text-accent flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-left text-lg font-medium transition-colors [&::-webkit-details-marker]:hidden">
+                {faq.question}
+                <Plus
+                  size={18}
+                  className="text-text-muted shrink-0 transition-transform duration-200 group-open:rotate-45"
+                />
+              </summary>
+              <p className="text-text-secondary max-w-xl pb-6 leading-relaxed">{faq.answer}</p>
+            </details>
+          ))}
+        </div>
+      </Reveal>
+    </RailSection>
   );
 }

@@ -1,30 +1,24 @@
-import Section from '@/components/ui/Section';
-import SectionHeading from '@/components/ui/SectionHeading';
+import RailSection from '@/components/ui/RailSection';
 import Reveal from '@/components/ui/Reveal';
-import Card from '@/components/ui/Card';
-import DynIcon from '@/components/ui/DynIcon';
 import { differentiators } from '@/data/differentiators';
 
+// Two flat statements with the amber tick motif. No icon tiles, no boxes.
 export default function WhyMe() {
   return (
-    <Section>
-      <SectionHeading eyebrow="Why me" title="Why founders keep coming back." />
-
-      <div className="mt-14 grid gap-6 md:grid-cols-2">
+    <RailSection index="05" label="Why me" title="Why founders keep coming back.">
+      <div className="mt-10 grid gap-x-10 gap-y-10 md:mt-14 md:grid-cols-2">
         {differentiators.map((d, i) => (
           <Reveal key={d.id} delay={i * 0.08}>
-            <Card className="flex h-full gap-5">
-              <span className="rounded-input bg-accent-soft text-accent flex h-12 w-12 shrink-0 items-center justify-center">
-                <DynIcon name={d.icon} size={22} />
-              </span>
-              <div>
-                <h3 className="text-text-primary font-serif text-xl font-medium">{d.title}</h3>
-                <p className="text-text-secondary mt-3 leading-relaxed">{d.description}</p>
-              </div>
-            </Card>
+            <div className="border-border relative border-t pt-6">
+              <span aria-hidden className="bg-accent absolute -top-px left-0 h-px w-8" />
+              <h3 className="text-text-primary font-serif text-xl font-semibold tracking-tight md:text-2xl">
+                {d.title}
+              </h3>
+              <p className="text-text-secondary mt-3 max-w-md leading-relaxed">{d.description}</p>
+            </div>
           </Reveal>
         ))}
       </div>
-    </Section>
+    </RailSection>
   );
 }

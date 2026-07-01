@@ -37,11 +37,17 @@ generic-freelancer clichés. Clarity is the brand — the writing itself must be
 - **Next.js 16** (App Router, Turbopack), **React 19**, **TypeScript**
 - **Tailwind CSS v4** — JS config loaded via `@config` from `src/app/globals.css`
 - **next-themes** — light/dark, follows system, `data-theme` attribute
-- **Fonts:** Geist Sans (body, via `geist` pkg) + **Fraunces** (display serif, via `next/font/google`)
-- **framer-motion** — restrained scroll reveals + hero entrance only
+- **Fonts:** Geist Sans (body, via `geist` pkg) + **Bricolage Grotesque** (display face, via
+  `next/font/google`, mapped to the `font-serif` token — see "Homepage v2 redesign" below for
+  why this replaced Fraunces).
+- **framer-motion** — hero entrance choreography (clip-wipe portrait reveal, staggered type,
+  scroll parallax) + restrained scroll reveals elsewhere via `Reveal`.
 - **react-hook-form + zod** — the contact/qualifying-brief form
 - **mongoose** (lead storage, Atlas) + **resend** (email) — both best-effort, behind env checks
 - **Calendly** — inline widget via `widget.js` (optional; only loads when `NEXT_PUBLIC_CALENDLY_URL` is set)
+- **Google reCAPTCHA v3** — invisible bot check on the contact form (see "Spam protection" below)
+- **CookieYes** — cookie consent banner (see "Cookie consent" below)
+- **Google Analytics 4** — via `@next/third-parties/google`, env-gated (see "Analytics" below)
 - **lucide-react** for icons (note: brand glyphs like `Linkedin` are NOT exported in this
   version — LinkedIn uses an inline SVG in `Footer.tsx`)
 
@@ -53,26 +59,69 @@ Defined in `src/app/globals.css` (CSS variables) + `tailwind.config.ts` (token m
 - Colors (use the Tailwind tokens, not raw hex): `bg`, `bg-secondary`, `surface`,
   `text-primary` (ink), `text-secondary` (stone), `text-muted`, `accent` (honey amber — the
   ONE accent, used sparingly), `accent-soft`, `on-accent`, `border`, `border-strong`.
-- Type: `font-serif` (Fraunces) for headings/display, `font-sans` (Geist) for everything else.
-  Headings use `tracking-tight`; global `text-wrap: balance` on h1–h4, `pretty` on `p`.
-- Motion: subtle only — fades/rises via `Reveal`, hero stagger. Respect `prefers-reduced-motion`.
-  No custom cursors, command palettes, glass, or gradient surfaces (deliberately removed).
-- Radius tokens: `rounded-card`, `rounded-input`, `rounded-pill`.
+- Type: `font-serif` (Bricolage Grotesque, despite the token name) for headings/display,
+  `font-sans` (Geist) for everything else. Headings use `tracking-tight`; global
+  `text-wrap: balance` on h1–h4, `pretty` on `p`.
+- Motion: intentional, not decorative. Hero uses a real entrance sequence (clip-wipe reveal on
+  the portrait, staggered headline/subhead/CTA, scroll parallax); everywhere else uses
+  restrained fades/rises via `Reveal`. Respect `prefers-reduced-motion` everywhere. No custom
+  cursors, command palettes, glass, or gradient surfaces (deliberately removed).
+- Radius tokens: `rounded-card`, `rounded-input`, `rounded-pill`. **`rounded-card` is reserved
+  for photos/media** (see "Homepage v2 redesign" below) — content cards are flat, not boxed.
 
 ### Shared UI primitives (`src/components/ui/`)
 
 - `Container` — centered max-width (`max-w-content`) + responsive padding. **Always wrap page
   content in this** (its `mx-auto` is what centers the site).
 - `Section` — semantic `<section>` with vertical rhythm (`py-24 md:py-32`) + `scroll-mt`.
-- `SectionHeading` — eyebrow (accent rule + tracked label) + serif title + intro. Use for
-  consistency across sections.
-- `Card` — bordered surface with hover lift/shadow. Use for all content cards.
+- `SectionHeading` — serif title + optional intro. Takes an `eyebrow` prop for backwards
+  compatibility but **does not render it** — see "Homepage v2 redesign" below for why.
+- `Card` — a flat editorial block: hairline top border only, warms to `accent` on hover. **Not**
+  a bordered box with hover-lift; that look was deliberately removed (see below). Use for all
+  content cards.
 - `CtaButton` — canonical link-button (primary = inverting ink; ghost). Arrow nudges on hover.
 - `PageHeader` — page hero. Pass a `media` node to get the split-hero layout (heading + visual
   with a warm glow + bottom border) used on `/work` and `/services`.
 - `ImagePlaceholder` — image slot that displays its generation **prompt** until a real `src` is
   set. Use this for every not-yet-real image (see "Imagery & placeholders").
 - `Reveal`, `DynIcon` (string→lucide map; extend the map when adding icons).
+
+## Homepage v2 redesign — read before touching Hero/Card/SectionHeading
+
+The homepage was deliberately rebuilt (PR #7, `redesign/homepage-v2`) to stop reading as
+"AI-generated." If you're touching the hero, section headings, or content cards, know the
+reasoning so you don't regress it:
+
+- **Font swap: Fraunces → Bricolage Grotesque.** Fraunces is a recognized AI-default display
+  serif; keeping it was actively working against the "not-AI" goal. Bricolage is wired as
+  `--font-display` in `layout.tsx` and mapped to the existing `--font-serif` CSS var / `font-serif`
+  Tailwind token, so no markup had to change, just the font backing the token.
+- **No section eyebrows.** The small uppercase tracked kicker above every section ("WHAT I DO",
+  "SELECTED RESULTS", etc.) is one of the most recognizable AI/template tells. `SectionHeading`
+  still accepts an `eyebrow` prop (call sites still pass it) but silently ignores it. Don't
+  re-add eyebrow rendering; if a section genuinely needs a category label, find a different,
+  less-templated treatment.
+- **No boxed content cards.** The old `Card` (rounded border, background surface, hover lift +
+  shadow) is another AI/SaaS-template tell. It's now a flat block: a hairline top border that
+  warms to `accent` on hover, no background fill, no box shadow. `Services.tsx` also dropped
+  its rounded icon tile above each heading (also an explicit anti-pattern) in favor of a small
+  amber outcome label above the title.
+- **`rounded-card` is now reserved for photography/media**, not content boxes — e.g. the hero
+  portrait (`rounded-2xl` + soft shadow) and `PageHeader`/`Showcase` imagery. Rounding a real
+  photo reads as an intentional framing choice; rounding a text card reads as a template.
+- **Section titles are capped smaller** (`clamp(1.875rem,3.4vw,2.75rem)`, was up to `3.25rem`)
+  with `text-balance`, specifically so multi-word titles don't wrap to 3 lines and look
+  unfinished. If a title still wants to wrap awkwardly, shorten the title and move the rest into
+  the section's `intro` line rather than growing the heading.
+- **Hero uses real choreography, not a uniform fade-up.** Masthead meta row draws its hairline
+  in via `scaleX`; the portrait reveals via `clipPath` inset + a slight scale-settle (1.08 → 1),
+  with a subtle scroll parallax (`useScroll`/`useTransform`) as you scroll past. This is
+  deliberately more elaborate than the rest of the site's `Reveal`-based fades — the hero is the
+  one place that earns it.
+- **Design context lives in `PRODUCT.md`** (repo root) — written for the `impeccable` design
+  skill's `init` flow. It documents the register (brand), audience, anti-references (explicitly
+  lists the AI tells above), and the current design direction. Keep it in sync if the direction
+  shifts again; `impeccable` and future redesign passes read it first.
 
 ## Structure
 
@@ -89,14 +138,18 @@ src/components/
   sections/               # one file per page section (Hero, Services, FeaturedWork,
                           #   Trajectory, Showcase, LatestPosts, VideoTestimonials, ...)
   features/               # ThemeToggle, ContactForm, ContactTabs, CalendlyWidget,
-                          #   AwardsGallery, WhatsAppButton (floating chat button, all pages)
+                          #   AwardsGallery, WhatsAppButton (floating chat button, all pages),
+                          #   CookieYesBanner, ReCaptchaProvider
   seo/                    # JsonLd (inlines <script type="application/ld+json">)
   ui/                     # the primitives above
 src/config/   site.ts (brand/identity), navigation.ts (nav + primaryCta)
 src/data/     services, process, differentiators, faq, outcomes, testimonials, products,
               fit, principles, experience, showcase, skills, blog  ← all content lives here
-src/lib/      validations (zod + budget/timeline options), email, db, rate-limit, seo, utils
+src/lib/      validations (zod + budget/timeline options), email, db, rate-limit, seo, utils,
+              recaptcha (server-side token verification)
 src/types/    shared interfaces
+PRODUCT.md    design context for the `impeccable` design skill (register, audience,
+              anti-references, current direction) — see "Homepage v2 redesign" above
 ```
 
 **Content is data-driven:** edit files in `src/data/` and `src/config/site.ts` — sections read
@@ -161,6 +214,38 @@ are no placeholder showcase items on `/work`.
 the linked company name as the primary attribution line and `location` as a muted sub-line.
 The contact page pulls `writtenTestimonials[0]` for the inline quote in the left column.
 
+## Spam protection (reCAPTCHA v3 + honeypot)
+
+The contact form has two independent layers, both fail-open in dev:
+
+1. **Honeypot field** — `website` in `src/lib/validations.ts`, a `z.string().max(0).optional()`
+   field that's invisible to real users but bots fill in. Rejected server-side if non-empty.
+2. **Google reCAPTCHA v3** — `ReCaptchaProvider.tsx` wraps the app in `layout.tsx` and loads the
+   script only when `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` is set (no-op otherwise, so dev works
+   without keys). `ContactForm.tsx` calls `useReCaptcha().executeRecaptcha('contact_submit')`
+   on submit and sends the token to the API route; `src/lib/recaptcha.ts` verifies it
+   server-side against Google using `RECAPTCHA_SECRET_KEY`. Both env vars are required together;
+   set neither to disable in a given environment. `recaptcha.google.com` /
+   `www.google.com` / `www.gstatic.com` are allowlisted in the CSP (`script-src`, `style-src`,
+   `frame-src`, `connect-src`) in `next.config.ts` for this.
+
+## Cookie consent (CookieYes)
+
+`CookieYesBanner.tsx` loads the CookieYes client script (`strategy="beforeInteractive"`,
+required so it initializes before other scripts) and renders unconditionally at the top of
+`<body>` in `layout.tsx` — it's always on, not env-gated (the site ID is embedded in the script
+URL). `cdn-cookieyes.com` / `log.cookieyes.com` are allowlisted in the CSP. The privacy policy
+(`src/data/legal.ts`) documents it. **Consent Mode v2 is not wired up** — Google Analytics
+currently fires regardless of the visitor's cookie choice; the banner is present but doesn't
+yet gate GA. Wiring that up is a real gap if EU/UK compliance matters, not just cosmetic.
+
+## Analytics (Google Analytics 4)
+
+`GoogleAnalytics` from `@next/third-parties/google`, rendered in `layout.tsx` only when
+`NEXT_PUBLIC_GA_ID` is set (no-op in dev/preview unless configured). `googletagmanager.com` /
+`google-analytics.com` / `analytics.google.com` are allowlisted in the CSP. See "Cookie
+consent" above re: Consent Mode not being wired up yet.
+
 ## Blog (Sanity-backed)
 
 The blog is live on **Sanity**. The app only **reads** published content; it ships
@@ -201,8 +286,16 @@ Search-engine plumbing lives in three places:
 
 2. **Root metadata** (`src/app/layout.tsx`): `metadataBase`, title template, default OG/Twitter,
    `viewport` (color-scheme + themeColor per light/dark), `robots` directives, `appleWebApp`,
-   keywords, formatDetection. The root layout also injects the site-wide JSON-LD `@graph` (Person
+   keywords, formatDetection. The homepage title includes role + audience (not just the brand
+   tagline) so search snippets say what Sahal does: `"Sahal Shaikh | Product Engineer for
+Founders & Small Teams"`. The root layout also injects the site-wide JSON-LD `@graph` (Person
    - WebSite, linked via `@id`) via the `JsonLd` component.
+   - **Favicon:** `src/app/icon.png` (via Next's file convention, generates the `<link
+rel="icon">`) plus `public/favicon.ico` (multi-size 16/32/48, generated with `sharp`) at the
+     conventional root URL so crawlers that hard-code `/favicon.ico` don't 404.
+   - **OG image:** `public/images/og-image.jpg` is a real 1200×630 generated share-preview
+     image (not a placeholder). If you regenerate it, verify the actual file dimensions match
+     the `og:image:width`/`height` meta tags in `layout.tsx`, they've been wrong before.
 
 3. **Per-page metadata + structured data** — use the helpers in `src/lib/seo.ts`:
    - `pageMetadata({ title, description, path })` builds canonical + per-page OG/Twitter on top
@@ -256,6 +349,9 @@ to survive Next.js hot reloads. Key details:
   Required to also fire the lead-side autoresponder; without it, only the owner
   notification goes out via Resend's sandbox sender.
 - `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBLIC_SANITY_DATASET` (public; blog reads)
+- `NEXT_PUBLIC_GA_ID` — GA4 measurement ID (e.g. `G-XXXXXXXXXX`); omit to disable analytics
+- `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` + `RECAPTCHA_SECRET_KEY` — reCAPTCHA v3; both required
+  together, omit both to disable
 
 The contact flow works without env in dev (it logs and no-ops persistence/email).
 
@@ -293,12 +389,16 @@ Prompts live in data/markup, so they're easy to find and edit:
   Both still + motion versions per entry. The videos are heavy (~60 MB combined); re-encode
   with `ffmpeg -c:v libx264 -crf 28 -preset slow -vf scale=1280:-2 -an` before public launch
   if they haven't been optimized yet. (These videos currently load eagerly; see Roadmap.)
-- **Portraits** — `/public/images/portraits/`: real photos of Sahal. `sahal-hero` (homepage hero,
-  a temporary photo to be swapped for the founder intro video later), `sahal-candid` (homepage
-  "short version"), `sahal-services` (/services hero), `sahal-headshot` (/about portrait),
-  `sahal-desk` (/work hero). `sahal-candid-grey` is an unused alternate. Don't swap back to placeholders.
-- **Brand icon set** — `src/app/icon.png` (favicon), `src/app/apple-icon.png`, and
-  `public/icon-maskable.png`: the amber "S." tile, generated from one source. Referenced by `manifest.ts`.
+- **Portraits** — `/public/images/portraits/`: real photos/generated portraits of Sahal.
+  `sahal-hero` (homepage hero, a temporary photo to be swapped for the founder intro video
+  later), `sahal-candid` (homepage "short version"), `sahal-services` (/services hero, AI
+  generated to match the reference photos), `sahal-headshot` (/about portrait), `sahal-desk`
+  (/work hero). `sahal-candid-grey` is an unused alternate. Don't swap back to placeholders.
+- **Brand icon set** — `src/app/icon.png` (favicon), `src/app/apple-icon.png`,
+  `public/icon-maskable.png`, and `public/favicon.ico`: the amber "S." tile, generated from one
+  source. Referenced by `manifest.ts` (`display: 'browser'`, not `'standalone'`, so Chrome/Edge
+  don't prompt visitors to "install" a portfolio site as an app).
+- **OG share image** — `public/images/og-image.jpg`: real 1200×630 generated preview, on-brand.
 
 ### Content placeholders still to replace (clearly marked in code)
 
@@ -328,6 +428,11 @@ Not professionally reviewed legal advice; have a lawyer check before relying on 
   first and only load/play each video when it scrolls into view (IntersectionObserver), pausing
   off-screen. Re-encode the MP4s too (see Imagery).
 - Swap the homepage hero photo for the founder intro video when the edit is ready (`Hero.tsx`).
+- **Wire Google Consent Mode v2** into the CookieYes + GA integration so GA actually respects
+  the visitor's cookie choice instead of firing unconditionally (see "Cookie consent" above).
+- Carry the Homepage v2 redesign language (flat cards, no eyebrows, Bricolage type) into the
+  remaining homepage sections and inner pages that haven't been touched yet, and revisit
+  `FinalCta.tsx` (still the older inked-box treatment).
 - Multilingual (EN-only at launch; architecture intended to be i18n-ready later)
 
 The site is live at https://www.sahalshaikh.com (deployed on Vercel).
