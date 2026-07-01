@@ -1,5 +1,4 @@
 import Hero from '@/components/sections/Hero';
-import SocialProof from '@/components/sections/SocialProof';
 import Problem from '@/components/sections/Problem';
 import Services from '@/components/sections/Services';
 import FeaturedWork from '@/components/sections/FeaturedWork';
@@ -15,7 +14,6 @@ export default function PortfolioPage() {
   return (
     <>
       <Hero />
-      <SocialProof />
       <Problem />
       <Services />
       <FeaturedWork />
