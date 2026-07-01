@@ -133,7 +133,7 @@ export default function Hero() {
                 className="h-full w-full"
               >
                 <Image
-                  src="/images/portraits/sahal-hero.png"
+                  src="/images/portraits/sahal-hero-2.png"
                   alt="Sahal Shaikh, product engineer."
                   fill
                   priority
