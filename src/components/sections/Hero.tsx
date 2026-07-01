@@ -12,23 +12,15 @@ import { primaryCta } from '@/config/navigation';
 // than pops, which is what reads as "premium" instead of "generic fade-up".
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-// Real client names shown in the ledger row under the hero. All four are real,
-// shipped client work (see src/data/showcase.ts). Never pad with fakes.
+// Real client names shown in the ledger row that closes the hero. All four are
+// real, shipped client work (see src/data/showcase.ts). Never pad with fakes.
 const clients = ['Veylix Staffing', 'Fairpath Healthcare', 'Vallorex', 'Foxera Studio'];
 
 /** One display line that rises out of an overflow-hidden mask. */
-function MaskedLine({
-  children,
-  delay,
-  className,
-}: {
-  children: React.ReactNode;
-  delay: number;
-  className?: string;
-}) {
+function MaskedLine({ children, delay }: { children: React.ReactNode; delay: number }) {
   const reduce = useReducedMotion();
   return (
-    <span className={`block overflow-hidden ${className ?? ''}`}>
+    <span className="block overflow-hidden">
       <motion.span
         className="block"
         initial={reduce ? { opacity: 0 } : { y: '110%' }}
@@ -47,7 +39,7 @@ export default function Hero() {
 
   // Subtle scroll parallax: the portrait drifts up a touch as you scroll past.
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
-  const portraitY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : -48]);
+  const portraitY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : -40]);
 
   const fade = (delay: number) => ({
     initial: reduce ? { opacity: 0 } : { opacity: 0, y: 22 },
@@ -85,18 +77,25 @@ export default function Hero() {
           />
         </div>
 
-        {/* Cover headline — full measure, second line steps in like set type. */}
-        <h1 className="text-text-primary pt-12 font-serif text-[clamp(2.75rem,8vw,6.5rem)] leading-[1.02] font-semibold tracking-[-0.035em] md:pt-16">
+        {/* Cover headline — two flush-left lines, sized so neither ever rewraps
+            on desktop. The line break is the composition; don't let it drift. */}
+        <h1 className="text-text-primary pt-12 font-serif text-[clamp(2.25rem,7vw,5.75rem)] leading-[1.04] font-semibold tracking-[-0.035em] md:pt-16">
           <MaskedLine delay={0.15}>Ambiguous idea in.</MaskedLine>
-          <MaskedLine delay={0.27} className="pl-[6%] sm:pl-[10%]">
+          <MaskedLine delay={0.27}>
             <span className="text-accent">Shipped product</span> out.
           </MaskedLine>
         </h1>
 
-        {/* Lower deck: intro + CTAs beside the portrait. */}
-        <div className="mt-12 grid items-start gap-x-16 gap-y-12 md:mt-16 md:grid-cols-[minmax(0,1fr)_minmax(0,400px)]">
-          <div className="max-w-md md:pt-4">
-            <motion.p {...fade(0.5)} className="text-text-secondary text-lg leading-relaxed">
+        {/* Deck — a locked two-column composition. The portrait's height is tied
+            to the copy column (grid stretch), and the client ledger is pinned to
+            the shared baseline, so there is never dead space between them. */}
+        <div className="mt-12 grid gap-x-14 gap-y-12 md:mt-16 md:grid-cols-[minmax(0,1fr)_minmax(0,440px)] md:grid-rows-[1fr_auto]">
+          {/* Intro + CTAs */}
+          <div className="md:col-start-1 md:row-start-1">
+            <motion.p
+              {...fade(0.5)}
+              className="text-text-secondary max-w-lg text-lg leading-relaxed md:text-xl"
+            >
               I&rsquo;m Sahal. Founders bring me the half-formed version, the messy brief, the thing
               that has been stuck in a doc for months. I turn it into a website or product that
               ships and moves the business. One person, the whole way through.
@@ -115,21 +114,22 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          {/* Portrait — clip-wipe reveal, settle-in scale, scroll parallax. */}
+          {/* Portrait — wipes open left to right, settles, then drifts on scroll.
+              Fills the full height of the deck on desktop. */}
           <motion.div
             style={{ y: portraitY }}
-            className="relative mx-auto w-full max-w-sm md:mx-0 md:ml-auto md:max-w-none"
+            className="relative mx-auto w-full max-w-sm md:col-start-2 md:row-span-2 md:row-start-1 md:m-0 md:h-full md:max-w-none"
           >
             <motion.div
-              initial={reduce ? { opacity: 0 } : { clipPath: 'inset(100% 0 0 0)' }}
-              animate={reduce ? { opacity: 1 } : { clipPath: 'inset(0% 0 0 0)' }}
-              transition={{ duration: 1.1, ease: EASE, delay: 0.3 }}
-              className="border-border bg-bg-secondary relative aspect-[4/5] w-full overflow-hidden rounded-2xl border shadow-[0_28px_70px_-32px_rgba(0,0,0,0.55)]"
+              initial={reduce ? { opacity: 0 } : { clipPath: 'inset(0 100% 0 0)' }}
+              animate={reduce ? { opacity: 1 } : { clipPath: 'inset(0 0% 0 0)' }}
+              transition={{ duration: 1.1, ease: EASE, delay: 0.35 }}
+              className="border-border bg-bg-secondary relative aspect-[4/5] w-full overflow-hidden rounded-2xl border shadow-[0_28px_70px_-32px_rgba(0,0,0,0.55)] md:aspect-auto md:h-full md:min-h-[440px]"
             >
               <motion.div
                 initial={reduce ? {} : { scale: 1.08 }}
                 animate={{ scale: 1 }}
-                transition={{ duration: 1.5, ease: EASE, delay: 0.3 }}
+                transition={{ duration: 1.5, ease: EASE, delay: 0.35 }}
                 className="h-full w-full"
               >
                 <Image
@@ -137,37 +137,43 @@ export default function Hero() {
                   alt="Sahal Shaikh, product engineer."
                   fill
                   priority
-                  sizes="(max-width: 768px) 80vw, 36vw"
+                  sizes="(max-width: 768px) 88vw, 440px"
                   className="object-cover object-center"
                 />
               </motion.div>
             </motion.div>
           </motion.div>
-        </div>
 
-        {/* Client ledger — real names, quiet type. Replaces the old proof strip. */}
-        <motion.div {...fade(0.78)} className="relative mt-14 pt-5 md:mt-16">
-          <motion.span
-            aria-hidden
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 1, ease: EASE, delay: 0.8 }}
-            className="bg-border absolute inset-x-0 top-0 h-px origin-left"
-          />
-          <div className="text-text-secondary flex flex-wrap items-baseline gap-x-3 gap-y-1.5 text-sm">
-            <span className="text-text-muted mr-3">Recent client work</span>
-            {clients.map((name, i) => (
-              <span key={name} className="flex items-baseline gap-x-3">
-                {i > 0 && (
-                  <span aria-hidden className="text-border-strong select-none">
-                    /
-                  </span>
-                )}
-                <span>{name}</span>
-              </span>
-            ))}
+          {/* Client ledger — closes the copy column on the portrait's baseline. */}
+          <div className="relative self-end pt-5 md:col-start-1 md:row-start-2">
+            <motion.span
+              aria-hidden
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 1, ease: EASE, delay: 0.8 }}
+              className="bg-border absolute inset-x-0 top-0 h-px origin-left"
+            />
+            <motion.p {...fade(0.85)} className="text-text-muted text-sm">
+              Recent client work
+            </motion.p>
+            <div className="text-text-secondary mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1.5 text-sm">
+              {clients.map((name, i) => (
+                <motion.span
+                  key={name}
+                  {...fade(0.9 + i * 0.07)}
+                  className="flex items-baseline gap-x-3"
+                >
+                  {i > 0 && (
+                    <span aria-hidden className="text-border-strong select-none">
+                      /
+                    </span>
+                  )}
+                  <span>{name}</span>
+                </motion.span>
+              ))}
+            </div>
           </div>
-        </motion.div>
+        </div>
       </Container>
     </section>
   );
