@@ -186,6 +186,124 @@ function autoresponderText(data: ContactFormData): string {
   ].join('\n');
 }
 
+function subscriberOwnerNotificationHtml(email: string): string {
+  return `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>New subscriber</title></head>
+<body style="margin:0;padding:0;background:${C.bg};font-family:${SANS};color:${C.ink};">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr><td align="center" style="padding:32px 16px;">
+      <table role="presentation" width="100%" style="max-width:560px;background:${C.surface};border:1px solid ${C.border};border-radius:12px;overflow:hidden;" cellpadding="0" cellspacing="0" border="0">
+        <tr><td style="padding:32px 32px 4px;">
+          <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${C.accent};font-weight:600;">
+            <span style="display:inline-block;vertical-align:middle;width:22px;height:1px;background:${C.accent};margin-right:8px;"></span>New subscriber
+          </div>
+          <h1 style="margin:12px 0 0;font-family:${SERIF};font-weight:500;font-size:26px;line-height:1.2;color:${C.ink};letter-spacing:-0.01em;">Someone joined the list.</h1>
+        </td></tr>
+
+        <tr><td style="padding:20px 32px 28px;">
+          <a href="mailto:${escapeHtml(email)}" style="color:${C.ink};text-decoration:underline;text-decoration-color:${C.border};text-underline-offset:2px;font-size:15px;">${escapeHtml(email)}</a>
+        </td></tr>
+
+        <tr><td style="padding:14px 32px;border-top:1px solid ${C.border};background:${C.bg};color:${C.muted};font-size:12px;line-height:1.5;">
+          Sent via ${escapeHtml(SITE_HOST)} &middot; ${escapeHtml(new Date().toUTCString())}
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+}
+
+function subscriberWelcomeHtml(): string {
+  return `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>You're on the list</title></head>
+<body style="margin:0;padding:0;background:${C.bg};font-family:${SANS};color:${C.ink};">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr><td align="center" style="padding:32px 16px;">
+      <table role="presentation" width="100%" style="max-width:560px;background:${C.surface};border:1px solid ${C.border};border-radius:12px;overflow:hidden;" cellpadding="0" cellspacing="0" border="0">
+        <tr><td style="padding:36px 32px 8px;">
+          <div style="font-family:${SERIF};font-weight:500;font-size:20px;color:${C.ink};letter-spacing:-0.01em;">
+            Sahal Shaikh<span style="color:${C.accent};">_</span>
+          </div>
+        </td></tr>
+
+        <tr><td style="padding:14px 32px 0;">
+          <h1 style="margin:0;font-family:${SERIF};font-weight:500;font-size:26px;line-height:1.25;color:${C.ink};letter-spacing:-0.01em;">You're on the list.</h1>
+        </td></tr>
+
+        <tr><td style="padding:18px 32px 0;font-size:16px;line-height:1.7;color:${C.ink};">
+          <p style="margin:0 0 14px;">Thanks for the email. I'll send you the occasional note on shipping products, working with international clients, and what's actually working, not a drip campaign, just the useful stuff, when there's something worth sharing.</p>
+          <p style="margin:0 0 4px;">Speak soon,</p>
+          <p style="margin:0;font-family:${SERIF};font-style:italic;font-size:18px;color:${C.ink};">Sahal</p>
+        </td></tr>
+
+        <tr><td style="padding:28px 32px 28px;">
+          <div style="border-top:1px solid ${C.border};padding-top:16px;font-size:12px;color:${C.muted};line-height:1.6;">
+            You are receiving this because you signed up at <a href="${escapeHtml(SITE_URL)}" style="color:${C.stone};text-decoration:underline;text-decoration-color:${C.border};text-underline-offset:2px;">${escapeHtml(SITE_HOST)}</a>. Reply to this email any time to unsubscribe.
+          </div>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+}
+
+function subscriberWelcomeText(): string {
+  return [
+    "You're on the list.",
+    '',
+    "Thanks for the email. I'll send you the occasional note on shipping products, working with international clients, and what's actually working, not a drip campaign, just the useful stuff, when there's something worth sharing.",
+    '',
+    'Speak soon,',
+    'Sahal',
+    '',
+    `You are receiving this because you signed up at ${SITE_HOST}. Reply to this email any time to unsubscribe.`,
+  ].join('\n');
+}
+
+// Notifies the owner of a new marketing-list signup, and sends the subscriber a
+// short welcome confirming they're on the list. Same best-effort, env-gated
+// pattern as sendLeadNotification: no-ops with a warning when Resend env is
+// missing, and the welcome email needs a verified `RESEND_FROM` sender for the
+// same sandbox-sender reason as the lead autoresponder.
+export async function sendSubscriberNotification(email: string): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const to = process.env.CONTACT_EMAIL;
+  const from = process.env.RESEND_FROM;
+
+  if (!apiKey || !to) {
+    console.warn('[email] RESEND_API_KEY/CONTACT_EMAIL not set, skipping subscriber email.');
+    return;
+  }
+
+  const { Resend } = await import('resend');
+  const resend = new Resend(apiKey);
+  const sender = from ?? 'Sahal Portfolio <onboarding@resend.dev>';
+
+  await resend.emails.send({
+    from: sender,
+    to,
+    replyTo: email,
+    subject: `New subscriber: ${email}`,
+    html: subscriberOwnerNotificationHtml(email),
+    text: `New subscriber: ${email}\nSent via ${SITE_HOST}`,
+  });
+
+  if (from) {
+    try {
+      await resend.emails.send({
+        from,
+        to: email,
+        replyTo: to,
+        subject: "You're on the list.",
+        html: subscriberWelcomeHtml(),
+        text: subscriberWelcomeText(),
+      });
+    } catch (err) {
+      console.error('[email] subscriber welcome failed:', err);
+    }
+  }
+}
+
 // Sends the notification to the site owner, and (when a verified `RESEND_FROM`
 // is configured) an autoresponder back to the lead. No-ops with a warning when
 // Resend env is missing, so local dev still works.

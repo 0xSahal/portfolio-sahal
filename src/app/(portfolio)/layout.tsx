@@ -2,6 +2,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import MobileCtaBar from '@/components/layout/MobileCtaBar';
 import WhatsAppButton from '@/components/features/WhatsAppButton';
+import NewsletterModal from '@/components/features/NewsletterModal';
 
 export default function PortfolioLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -11,6 +12,7 @@ export default function PortfolioLayout({ children }: { children: React.ReactNod
       <Footer />
       <MobileCtaBar />
       <WhatsAppButton />
+      <NewsletterModal />
     </>
   );
 }
