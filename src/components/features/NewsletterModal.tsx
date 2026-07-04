@@ -20,6 +20,10 @@ const DISMISS_COOLDOWN_MS = 14 * 24 * 60 * 60 * 1000;
 
 const STORAGE_KEY = 'sahal_newsletter';
 
+// Dispatched (e.g. by the NoticeBar "Get updates" link) to open the modal on
+// demand, regardless of the dwell timer, dismissal cooldown, or current page.
+export const OPEN_NEWSLETTER_EVENT = 'sahal:open-newsletter';
+
 interface StoredState {
   subscribed?: boolean;
   dismissedAt?: number;
@@ -66,14 +70,16 @@ export default function NewsletterModal() {
   const previouslyFocused = useRef<HTMLElement | null>(null);
 
   const excluded = EXCLUDED_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
-  // The modal never renders on an excluded page, regardless of `visible` —
-  // derived here so a navigation mid-open closes it declaratively instead of
-  // needing an effect to reach back in and flip state.
-  const shown = visible && !excluded;
+  // The timed auto-popup never renders on an excluded page — derived here so a
+  // navigation mid-open closes it declaratively. A manual open (the notice-bar
+  // link) is explicit user intent, so it overrides the exclusion.
+  const [manual, setManual] = useState(false);
+  const shown = visible && (manual || !excluded);
 
   const dismiss = useCallback(() => {
     writeState({ ...readState(), dismissedAt: Date.now() });
     setVisible(false);
+    setManual(false);
   }, []);
 
   // Start the one-shot site-wide dwell timer. This component lives in the
@@ -86,6 +92,19 @@ export default function NewsletterModal() {
       if (shouldOffer()) setVisible(true);
     }, SHOW_AFTER_MS);
     return () => window.clearTimeout(timer);
+  }, []);
+
+  // On-demand open from anywhere in the chrome (notice bar). Resets any stale
+  // error state so a reopened modal always starts on a fresh form.
+  useEffect(() => {
+    const onOpen = () => {
+      setStatus('idle');
+      setError(null);
+      setManual(true);
+      setVisible(true);
+    };
+    window.addEventListener(OPEN_NEWSLETTER_EVENT, onOpen);
+    return () => window.removeEventListener(OPEN_NEWSLETTER_EVENT, onOpen);
   }, []);
 
   useEffect(() => {
@@ -149,7 +168,8 @@ export default function NewsletterModal() {
       }
       writeState({ ...readState(), subscribed: true });
       setStatus('done');
-      window.setTimeout(() => setVisible(false), 3200);
+      // Just long enough to read "Thank you!", not a lingering pause.
+      window.setTimeout(() => setVisible(false), 900);
     } catch {
       setError('Network error. Please try again.');
       setStatus('error');
@@ -166,7 +186,7 @@ export default function NewsletterModal() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.4, ease: EASE }}
             className="bg-text-primary/40 absolute inset-0 backdrop-blur-sm"
           />
 
@@ -174,10 +194,10 @@ export default function NewsletterModal() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="newsletter-modal-title"
-            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.98 }}
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: 26, scale: 0.94 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={reduce ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.98 }}
-            transition={{ duration: 0.4, ease: EASE }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.97 }}
+            transition={{ duration: 0.6, ease: EASE, delay: reduce ? 0 : 0.08 }}
             className="border-border bg-surface relative w-full max-w-md overflow-hidden rounded-2xl border shadow-[0_28px_70px_-32px_rgba(0,0,0,0.55)]"
           >
             <button
@@ -191,17 +211,23 @@ export default function NewsletterModal() {
 
             <div className="p-8 md:p-9">
               {status === 'done' ? (
-                <div className="py-2 text-center">
+                <motion.div
+                  initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, ease: EASE }}
+                  className="py-2 text-center"
+                >
                   <span className="bg-accent-soft text-accent mx-auto flex h-12 w-12 items-center justify-center rounded-full">
                     <Check size={22} />
                   </span>
                   <h2 className="text-text-primary mt-5 font-serif text-xl font-semibold tracking-tight">
-                    You&rsquo;re on the list.
+                    Thank you!
                   </h2>
                   <p className="text-text-secondary mt-2 text-sm leading-relaxed">
-                    I&rsquo;ll send you something worth reading, not just noise.
+                    You&rsquo;re on the list. I&rsquo;ll send you something worth reading, not just
+                    noise.
                   </p>
-                </div>
+                </motion.div>
               ) : (
                 <>
                   <span aria-hidden className="bg-accent block h-px w-8" />
@@ -212,7 +238,8 @@ export default function NewsletterModal() {
                     Glad you&rsquo;re still here.
                   </h2>
                   <p className="text-text-secondary mt-3 text-[15px] leading-relaxed">
-                    Occasional notes on shipping products. No spam, nothing else.
+                    I send the occasional note on shipping products, no drip campaign, just the
+                    useful stuff when there&rsquo;s something worth sharing.
                   </p>
 
                   <form onSubmit={onSubmit} className="mt-6" noValidate>
