@@ -42,3 +42,14 @@ export const timelineOptions: { value: (typeof timelineValues)[number]; label: s
   { value: '3-plus-months', label: '3+ months' },
   { value: 'flexible', label: 'Flexible' },
 ];
+
+// The newsletter/marketing-list signup captured by NewsletterModal.
+export const subscribeSchema = z.object({
+  email: z.string().email('Please enter a valid email address').max(254).trim(),
+  // Honeypot — bots fill it, humans don't.
+  website: z.string().max(0).optional(),
+  // Google reCAPTCHA v3 token (set on submit when keys are configured).
+  recaptchaToken: z.string().min(1).optional(),
+});
+
+export type SubscribeFormData = z.infer<typeof subscribeSchema>;

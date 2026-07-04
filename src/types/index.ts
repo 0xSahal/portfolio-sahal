@@ -149,3 +149,14 @@ export interface IContactSubmission {
   createdAt: Date;
   status: 'new' | 'read' | 'replied';
 }
+
+// A marketing-list signup captured by the timed NewsletterModal (or any future
+// signup surface, hence `source`), separate from the qualifying-brief leads.
+export interface ISubscriber {
+  email: string;
+  source: string;
+  ip: string;
+  userAgent: string;
+  createdAt: Date;
+  status: 'subscribed' | 'unsubscribed';
+}

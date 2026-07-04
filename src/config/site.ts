@@ -13,6 +13,11 @@ export const siteConfig = {
     // Temporary scheduler now; swap to Calendly once the domain email is set up.
     calendly: process.env.NEXT_PUBLIC_CALENDLY_URL ?? '',
     email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? 'hello@sahalshaikh.com',
+    // Shown in the notice bar above the navbar. Same number as WhatsApp.
+    phone: {
+      display: '+91 95121 26663',
+      tel: '+919512126663',
+    },
     whatsapp: {
       // Full international number, digits only (country code + number). Used to build wa.me URLs.
       number: '919512126663',
