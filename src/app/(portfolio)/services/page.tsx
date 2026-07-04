@@ -41,6 +41,8 @@ export default function ServicesPage() {
           <ImagePlaceholder
             label="Hero visual"
             aspectClassName="aspect-[4/3]"
+            roundedClassName="rounded-2xl"
+            className="border-border border shadow-[0_20px_50px_-28px_rgba(0,0,0,0.45)]"
             sizes="(max-width: 768px) 100vw, 45vw"
             priority
             src="/images/portraits/sahal-services.png"

@@ -61,40 +61,34 @@ export default function ContactPage() {
             const t = writtenTestimonials[0];
             if (!t) return null;
             return (
-              <figure className="rounded-card border-border bg-surface mt-10 border p-6">
-                <blockquote className="text-text-primary font-serif text-lg leading-relaxed italic">
+              <figure className="border-border relative mt-10 border-t pt-6">
+                <span aria-hidden className="bg-accent absolute -top-px left-0 h-px w-8" />
+                <blockquote className="text-text-primary font-serif text-lg leading-relaxed">
                   &ldquo;{t.text}&rdquo;
                 </blockquote>
-                <figcaption className="border-border mt-4 flex items-center gap-3 border-t pt-4">
-                  <span className="bg-accent-soft text-accent flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-medium">
-                    {t.initials}
-                  </span>
-                  <span className="text-sm">
-                    {t.author ? (
-                      <span className="text-text-secondary">
-                        {t.author}
-                        {t.company ? `, ${t.company}` : ''}
-                      </span>
-                    ) : (
-                      <span className="flex flex-col gap-0.5">
-                        {t.companyUrl ? (
-                          <Link
-                            href={t.companyUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-text-primary decoration-border hover:text-accent hover:decoration-accent font-medium underline underline-offset-2 transition-colors"
-                          >
-                            {t.company}
-                          </Link>
-                        ) : (
-                          <span className="text-text-primary font-medium">{t.company}</span>
-                        )}
-                        {t.location && (
-                          <span className="text-text-muted text-xs">{t.location}</span>
-                        )}
-                      </span>
-                    )}
-                  </span>
+                <figcaption className="mt-4 text-sm">
+                  {t.author ? (
+                    <span className="text-text-secondary">
+                      {t.author}
+                      {t.company ? `, ${t.company}` : ''}
+                    </span>
+                  ) : (
+                    <span className="flex flex-col gap-0.5">
+                      {t.companyUrl ? (
+                        <Link
+                          href={t.companyUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-text-primary decoration-border hover:text-accent hover:decoration-accent font-medium underline underline-offset-2 transition-colors"
+                        >
+                          {t.company}
+                        </Link>
+                      ) : (
+                        <span className="text-text-primary font-medium">{t.company}</span>
+                      )}
+                      {t.location && <span className="text-text-muted text-xs">{t.location}</span>}
+                    </span>
+                  )}
                 </figcaption>
               </figure>
             );

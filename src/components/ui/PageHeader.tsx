@@ -1,30 +1,26 @@
-﻿import Container from '@/components/ui/Container';
+import Container from '@/components/ui/Container';
 import Reveal from '@/components/ui/Reveal';
 
 export default function PageHeader({
-  eyebrow,
   title,
   subtitle,
   media,
 }: {
+  // Accepted for backwards compatibility but intentionally NOT rendered, same
+  // convention as SectionHeading: a repeated uppercase kicker above every page
+  // title is an AI/template tell. Call sites can keep passing it.
   eyebrow?: string;
   title: string;
   subtitle?: string;
   // Optional right-column visual. When present, the header becomes a split hero
-  // with a warm glow and a bottom border that separates it from the next section.
+  // with a warm glow separating it from the next section. The visual should
+  // carry its own frame (rounded-2xl border + shadow, matching Hero/AboutTeaser)
+  // rather than relying on this component to wrap it.
   media?: React.ReactNode;
 }) {
   const heading = (
     <div>
-      {eyebrow && (
-        <div className="flex items-center gap-2.5">
-          <span className="bg-accent h-px w-6" aria-hidden />
-          <span className="text-accent text-xs font-medium tracking-[0.16em] uppercase">
-            {eyebrow}
-          </span>
-        </div>
-      )}
-      <h1 className="text-text-primary mt-4 max-w-2xl font-serif text-4xl leading-[1.08] font-medium tracking-tight md:text-5xl">
+      <h1 className="text-text-primary font-serif text-[clamp(2.25rem,5vw,3.25rem)] leading-[1.08] font-semibold tracking-[-0.03em] text-balance">
         {title}
       </h1>
       {subtitle && (
@@ -42,12 +38,7 @@ export default function PageHeader({
         />
         <Container className="relative grid items-center gap-12 pt-16 pb-16 md:grid-cols-[1.05fr_0.95fr] md:gap-16 md:pt-24 md:pb-24">
           {heading}
-          <Reveal delay={0.1}>
-            <div className="relative">
-              <div className="rounded-card border-accent/20 absolute -inset-3 border" aria-hidden />
-              {media}
-            </div>
-          </Reveal>
+          <Reveal delay={0.1}>{media}</Reveal>
         </Container>
       </section>
     );
