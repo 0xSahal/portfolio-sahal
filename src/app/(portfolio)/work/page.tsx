@@ -1,7 +1,6 @@
 ﻿import type { Metadata } from 'next';
 import PageHeader from '@/components/ui/PageHeader';
 import ImagePlaceholder from '@/components/ui/ImagePlaceholder';
-import FeaturedWork from '@/components/sections/FeaturedWork';
 import Showcase from '@/components/sections/Showcase';
 import VideoTestimonials from '@/components/sections/VideoTestimonials';
 import WrittenTestimonials from '@/components/sections/WrittenTestimonials';
@@ -35,6 +34,8 @@ export default function WorkPage() {
           <ImagePlaceholder
             label="Hero visual"
             aspectClassName="aspect-[4/3]"
+            roundedClassName="rounded-2xl"
+            className="border-border border shadow-[0_20px_50px_-28px_rgba(0,0,0,0.45)]"
             sizes="(max-width: 768px) 100vw, 45vw"
             priority
             src="/images/portraits/sahal-desk.jpg"
@@ -51,7 +52,6 @@ export default function WorkPage() {
         items={workShowcase}
         variant="cases"
       />
-      <FeaturedWork />
       <VideoTestimonials />
       <WrittenTestimonials />
       <Products />

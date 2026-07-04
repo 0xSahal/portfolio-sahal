@@ -3,9 +3,15 @@ import RailSection from '@/components/ui/RailSection';
 import Reveal from '@/components/ui/Reveal';
 import { faqs } from '@/data/faq';
 
-export default function Faq() {
+interface FaqProps {
+  // Only pass this when the section's position in the page's own numbered
+  // sequence is known (currently just the homepage). Omit on any other page.
+  index?: string;
+}
+
+export default function Faq({ index }: FaqProps = {}) {
   return (
-    <RailSection index="07" label="Questions" title="Questions, answered.">
+    <RailSection index={index} label="Questions" title="Questions, answered.">
       <Reveal delay={0.08}>
         <div className="divide-border border-border mt-10 max-w-2xl divide-y border-y md:mt-12">
           {faqs.map((faq) => (

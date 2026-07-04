@@ -50,18 +50,15 @@ export default function AboutPage() {
       <Container className="pt-8 pb-4">
         <div className="grid gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-14">
           <Reveal>
-            <div className="relative mx-auto w-full max-w-sm md:mx-0">
-              <div className="rounded-card border-accent/25 absolute -inset-3 border" aria-hidden />
-              <div className="rounded-card border-border bg-bg-secondary relative aspect-[4/5] w-full overflow-hidden border">
-                <Image
-                  src="/images/portraits/sahal-headshot.jpg"
-                  alt="Portrait of Sahal Shaikh."
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 100vw, 32vw"
-                  className="object-cover object-top"
-                />
-              </div>
+            <div className="border-border bg-bg-secondary relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-2xl border shadow-[0_20px_50px_-28px_rgba(0,0,0,0.45)] md:mx-0">
+              <Image
+                src="/images/portraits/sahal-headshot.jpg"
+                alt="Portrait of Sahal Shaikh."
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 32vw"
+                className="object-cover object-top"
+              />
             </div>
           </Reveal>
 

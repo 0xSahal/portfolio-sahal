@@ -2,9 +2,15 @@ import RailSection from '@/components/ui/RailSection';
 import Reveal from '@/components/ui/Reveal';
 import { processSteps } from '@/data/process';
 
-export default function Process() {
+interface ProcessProps {
+  // Only pass this when the section's position in the page's own numbered
+  // sequence is known (currently just the homepage). Omit on any other page.
+  index?: string;
+}
+
+export default function Process({ index }: ProcessProps = {}) {
   return (
-    <RailSection index="04" label="How it works" title="Clarity from day one.">
+    <RailSection index={index} label="How it works" title="Clarity from day one.">
       <div className="mt-10 grid gap-x-8 gap-y-10 sm:grid-cols-2 md:mt-14 lg:grid-cols-4">
         {processSteps.map((s, i) => (
           <Reveal key={s.step} delay={i * 0.07}>
