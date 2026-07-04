@@ -4,8 +4,13 @@ import Reveal from '@/components/ui/Reveal';
 
 interface RailSectionProps {
   id?: string;
-  /** Ledger index, e.g. "01". Rendered in amber serif in the left rail. */
-  index: string;
+  /**
+   * Ledger index, e.g. "01". Rendered in amber serif in the left rail.
+   * Omit when the section is reused on a page other than the one that
+   * defines its position in the sequence (the numeral only makes sense
+   * relative to a specific page's composition, not to the component itself).
+   */
+  index?: string;
   /** Quiet sentence-case label under the index. Not an uppercase eyebrow. */
   label: string;
   title?: React.ReactNode;
@@ -40,9 +45,11 @@ export default function RailSection({
             {/* Rail */}
             <Reveal>
               <div className="flex items-baseline gap-3 lg:sticky lg:top-28 lg:block">
-                <span className="text-accent font-serif text-lg font-semibold tracking-tight">
-                  {index}
-                </span>
+                {index && (
+                  <span className="text-accent font-serif text-lg font-semibold tracking-tight">
+                    {index}
+                  </span>
+                )}
                 <span className="text-text-muted text-sm lg:mt-1 lg:block">{label}</span>
               </div>
             </Reveal>

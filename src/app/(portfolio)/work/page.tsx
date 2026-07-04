@@ -1,7 +1,6 @@
 ﻿import type { Metadata } from 'next';
 import PageHeader from '@/components/ui/PageHeader';
 import ImagePlaceholder from '@/components/ui/ImagePlaceholder';
-import FeaturedWork from '@/components/sections/FeaturedWork';
 import Showcase from '@/components/sections/Showcase';
 import VideoTestimonials from '@/components/sections/VideoTestimonials';
 import WrittenTestimonials from '@/components/sections/WrittenTestimonials';
@@ -53,7 +52,6 @@ export default function WorkPage() {
         items={workShowcase}
         variant="cases"
       />
-      <FeaturedWork />
       <VideoTestimonials />
       <WrittenTestimonials />
       <Products />

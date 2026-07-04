@@ -18,10 +18,10 @@ export default function PortfolioPage() {
       <Services />
       <FeaturedWork />
       <VideoTestimonials />
-      <Process />
+      <Process index="04" />
       <WhyMe />
       <AboutTeaser />
-      <Faq />
+      <Faq index="07" />
       <LatestPosts />
       <FinalCta />
     </>
