@@ -212,9 +212,7 @@ export default function NewsletterModal() {
                     Glad you&rsquo;re still here.
                   </h2>
                   <p className="text-text-secondary mt-3 text-[15px] leading-relaxed">
-                    I send the occasional note on shipping products and working with international
-                    clients, no drip campaign, just the useful stuff when there&rsquo;s something
-                    worth sharing.
+                    Occasional notes on shipping products. No spam, nothing else.
                   </p>
 
                   <form onSubmit={onSubmit} className="mt-6" noValidate>
