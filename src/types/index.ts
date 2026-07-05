@@ -69,10 +69,15 @@ export interface VideoTestimonial {
   id: string;
   src: string;
   thumbnail: string;
-  clientName: string;
-  role: string;
   company: string;
-  quote: string;
+  companyUrl?: string;
+  // Optional: only set when the client has approved naming the person, and
+  // never invent a pull-quote — the video speaks for itself.
+  clientName?: string;
+  role?: string;
+  quote?: string;
+  // Human-readable length shown next to the player, e.g. "0:46".
+  duration?: string;
 }
 
 export interface WrittenTestimonial {

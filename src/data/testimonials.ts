@@ -1,34 +1,15 @@
 import type { VideoTestimonial, WrittenTestimonial } from '@/types';
 
-// Your strongest asset. Drop the 3 real videos into /public/videos and set
-// `src` + `thumbnail`. Names/roles below are PLACEHOLDERS — replace with real.
+// Real client videos only — entries without a `src` are ignored by the section,
+// so it's safe to stub future ones here before the file exists.
 export const videoTestimonials: VideoTestimonial[] = [
   {
-    id: 'vt-1',
-    src: '',
-    thumbnail: '',
-    clientName: 'Client name',
-    role: 'Role',
-    company: 'Company',
-    quote: 'Short pull-quote from the video.',
-  },
-  {
-    id: 'vt-2',
-    src: '',
-    thumbnail: '',
-    clientName: 'Client name',
-    role: 'Role',
-    company: 'Company',
-    quote: 'Short pull-quote from the video.',
-  },
-  {
-    id: 'vt-3',
-    src: '',
-    thumbnail: '',
-    clientName: 'Client name',
-    role: 'Role',
-    company: 'Company',
-    quote: 'Short pull-quote from the video.',
+    id: 'vt-foxera',
+    src: '/videos/testimonials/foxera-testimonial.mp4',
+    thumbnail: '/videos/testimonials/foxera-poster.jpg',
+    company: 'Foxera Studio',
+    companyUrl: 'https://foxerastudio.com',
+    duration: '0:46',
   },
 ];
 

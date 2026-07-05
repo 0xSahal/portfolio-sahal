@@ -4,7 +4,7 @@ import Reveal from '@/components/ui/Reveal';
 export default function Problem() {
   return (
     <RailSection
-      index="01"
+      index="02"
       label="The problem"
       title={
         <>

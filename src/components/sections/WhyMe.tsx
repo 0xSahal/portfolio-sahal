@@ -5,7 +5,7 @@ import { differentiators } from '@/data/differentiators';
 // Two flat statements with the amber tick motif. No icon tiles, no boxes.
 export default function WhyMe() {
   return (
-    <RailSection index="05" label="Why me" title="Why founders keep coming back.">
+    <RailSection index="06" label="Why me" title="Why founders keep coming back.">
       <div className="mt-10 grid gap-x-10 gap-y-10 md:mt-14 md:grid-cols-2">
         {differentiators.map((d, i) => (
           <Reveal key={d.id} delay={i * 0.08}>
