@@ -10,7 +10,7 @@ export default function Services() {
   return (
     <RailSection
       id="services"
-      index="02"
+      index="03"
       label="What I do"
       title="Three ways I help."
       intro="Different shapes of work, the same goal every time: results that move the business."

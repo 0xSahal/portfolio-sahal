@@ -14,14 +14,14 @@ export default function PortfolioPage() {
   return (
     <>
       <Hero />
+      <VideoTestimonials index="01" />
       <Problem />
       <Services />
       <FeaturedWork />
-      <VideoTestimonials />
-      <Process index="04" />
+      <Process index="05" />
       <WhyMe />
       <AboutTeaser />
-      <Faq index="07" />
+      <Faq index="08" />
       <LatestPosts />
       <FinalCta />
     </>

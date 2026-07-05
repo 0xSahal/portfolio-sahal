@@ -90,7 +90,7 @@ export default function FeaturedWork() {
 
   return (
     <RailSection
-      index="03"
+      index="04"
       label="Selected work"
       title="The work speaks first."
       intro="Real client sites, live right now. The words under each one are the client's, not mine."

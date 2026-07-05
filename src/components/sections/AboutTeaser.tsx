@@ -5,7 +5,7 @@ import CtaButton from '@/components/ui/CtaButton';
 
 export default function AboutTeaser() {
   return (
-    <RailSection index="06" label="About">
+    <RailSection index="07" label="About">
       <Reveal>
         <div className="grid items-center gap-10 md:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)] md:gap-16">
           <div className="border-border bg-bg-secondary relative mx-auto aspect-square w-full max-w-xs overflow-hidden rounded-2xl border shadow-[0_20px_50px_-28px_rgba(0,0,0,0.45)] md:mx-0">

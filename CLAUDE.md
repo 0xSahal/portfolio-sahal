@@ -399,13 +399,21 @@ Prompts live in data/markup, so they're easy to find and edit:
   source. Referenced by `manifest.ts` (`display: 'browser'`, not `'standalone'`, so Chrome/Edge
   don't prompt visitors to "install" a portfolio site as an app).
 - **OG share image** — `public/images/og-image.jpg`: real 1200×630 generated preview, on-brand.
+- **Foxera video testimonial** — `/public/videos/testimonials/foxera-testimonial.mp4` (+
+  `foxera-poster.jpg`): a real, client-provided on-camera testimonial (46s, re-encoded from
+  118MB to ~4MB). `VideoTestimonials.tsx` is a real click-to-play player (poster +
+  `preload="none"`, so video bytes only download on play); it renders only entries in
+  `src/data/testimonials.ts` with a non-empty `src` and hides itself when there are none (the
+  old `ENABLED` flag is gone). Ledger section `01` on the homepage, deliberately placed
+  right after the hero as the first thing a visitor sees (trust before pitch); unnumbered
+  on `/work`.
+  To add another: re-encode with ffmpeg (`-c:v libx264 -crf 26 -preset slow -vf
+scale=1280:-2 -c:a aac -b:a 128k`, keep the audio), drop video + poster frame into
+  `/public/videos/testimonials/`, add a data entry. Never invent a pull-quote or name the
+  person on camera without client approval.
 
 ### Content placeholders still to replace (clearly marked in code)
 
-- **Client video testimonials section is currently HIDDEN site-wide** via an `ENABLED = false`
-  flag at the top of `src/components/sections/VideoTestimonials.tsx`. Data placeholders for 3
-  videos still live in `src/data/testimonials.ts`. Flip `ENABLED` to `true` once the real
-  videos drop into `/public/videos` and the entries get real `src`/`thumbnail`/quotes.
 - 2 real product names / links / screenshots → `src/data/products.ts` (verify both live
   links resolve before launch)
 

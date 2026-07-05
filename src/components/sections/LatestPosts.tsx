@@ -56,7 +56,7 @@ export default async function LatestPosts() {
 
   return (
     <RailSection
-      index="08"
+      index="09"
       label="Writing"
       title="How I think about building."
       action={
