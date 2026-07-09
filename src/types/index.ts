@@ -71,6 +71,10 @@ export interface VideoTestimonial {
   thumbnail: string;
   company: string;
   companyUrl?: string;
+  location?: string;
+  // Drives the player frame: 'portrait' (phone/reel, 9:16) or 'landscape'
+  // (webcam, 16:9). Defaults to landscape. Never crop across orientations.
+  orientation?: 'portrait' | 'landscape';
   // Optional: only set when the client has approved naming the person, and
   // never invent a pull-quote — the video speaks for itself.
   clientName?: string;

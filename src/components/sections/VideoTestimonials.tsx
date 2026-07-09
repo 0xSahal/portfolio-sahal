@@ -1,9 +1,10 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { ArrowUpRight, Play } from 'lucide-react';
+import { Play } from 'lucide-react';
 import RailSection from '@/components/ui/RailSection';
 import Reveal from '@/components/ui/Reveal';
+import { cn } from '@/lib/utils';
 import { videoTestimonials } from '@/data/testimonials';
 import type { VideoTestimonial } from '@/types';
 
@@ -17,52 +18,82 @@ interface VideoTestimonialsProps {
   index?: string;
 }
 
-function VideoPlayer({ t }: { t: VideoTestimonial }) {
+function VideoCard({ t, delay }: { t: VideoTestimonial; delay: number }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [started, setStarted] = useState(false);
+  const portrait = t.orientation === 'portrait';
 
   return (
-    <div className="border-border bg-bg-secondary relative aspect-video w-full overflow-hidden rounded-2xl border shadow-[0_28px_70px_-32px_rgba(0,0,0,0.55)]">
-      {/* preload="none": the poster carries the section until someone actually
-          presses play — the video bytes never load for visitors who don't. */}
-      <video
-        ref={ref}
-        src={t.src}
-        poster={t.thumbnail}
-        preload="none"
-        playsInline
-        controls={started}
-        onEnded={() => setStarted(false)}
-        className="h-full w-full object-cover"
-        aria-label={`Video testimonial from ${t.company}`}
-      />
-      {!started && (
-        <button
-          type="button"
-          aria-label={`Play the testimonial from ${t.company}`}
-          onClick={() => {
-            setStarted(true);
-            ref.current?.play();
-          }}
-          className="group absolute inset-0 grid cursor-pointer place-items-center"
-        >
-          <span className="bg-text-primary/90 text-bg flex h-16 w-16 items-center justify-center rounded-full shadow-lg transition-transform duration-300 group-hover:scale-105 md:h-[4.5rem] md:w-[4.5rem]">
-            <Play size={24} className="ml-1" fill="currentColor" />
-          </span>
-          {t.duration && (
-            <span className="bg-text-primary/80 text-bg absolute right-4 bottom-4 rounded-full px-2.5 py-1 text-xs font-medium">
-              {t.duration}
+    <Reveal delay={delay} className="flex flex-col">
+      {/* Videos share a fixed height on lg so a landscape (16:9) and a portrait
+          (9:16) clip sit on the same baseline; widths derive from each clip's
+          own aspect ratio, so neither is ever cropped. They stack on mobile. */}
+      <div
+        className={cn(
+          'border-border bg-bg-secondary relative mx-auto overflow-hidden rounded-2xl border shadow-[0_28px_70px_-32px_rgba(0,0,0,0.55)] lg:mx-0 lg:h-[360px] lg:w-auto',
+          portrait
+            ? 'aspect-[9/16] w-full max-w-[240px] lg:max-w-none'
+            : 'aspect-video w-full max-w-[580px] lg:max-w-none',
+        )}
+      >
+        {/* preload="none": the poster carries the card until someone actually
+            presses play — the video bytes never load for visitors who don't. */}
+        <video
+          ref={ref}
+          src={t.src}
+          poster={t.thumbnail}
+          preload="none"
+          playsInline
+          controls={started}
+          onEnded={() => setStarted(false)}
+          className="h-full w-full object-cover"
+          aria-label={`Video testimonial from ${t.company}`}
+        />
+        {!started && (
+          <button
+            type="button"
+            aria-label={`Play the testimonial from ${t.company}`}
+            onClick={() => {
+              setStarted(true);
+              ref.current?.play();
+            }}
+            className="group absolute inset-0 grid cursor-pointer place-items-center"
+          >
+            <span className="bg-text-primary/90 text-bg flex h-16 w-16 items-center justify-center rounded-full shadow-lg transition-transform duration-300 group-hover:scale-105">
+              <Play size={24} className="ml-1" fill="currentColor" />
             </span>
+            {t.duration && (
+              <span className="bg-text-primary/80 text-bg absolute right-3 bottom-3 rounded-full px-2.5 py-1 text-xs font-medium">
+                {t.duration}
+              </span>
+            )}
+          </button>
+        )}
+      </div>
+
+      <figcaption className="mt-4 text-center lg:text-left">
+        <p className="text-text-primary font-serif text-lg font-semibold tracking-tight">
+          {t.companyUrl ? (
+            <a
+              href={t.companyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-underline"
+            >
+              {t.company}
+            </a>
+          ) : (
+            t.company
           )}
-        </button>
-      )}
-    </div>
+        </p>
+        {t.location && <p className="text-text-muted mt-0.5 text-sm">{t.location}</p>}
+      </figcaption>
+    </Reveal>
   );
 }
 
 export default function VideoTestimonials({ index }: VideoTestimonialsProps = {}) {
-  const [featured] = realVideos;
-  if (!featured) return null;
+  if (realVideos.length === 0) return null;
 
   return (
     <RailSection
@@ -70,45 +101,12 @@ export default function VideoTestimonials({ index }: VideoTestimonialsProps = {}
       index={index}
       label="In their words"
       title="Don't take my word for it."
+      intro="Real clients, unscripted, on what it was actually like to work together."
     >
-      <div className="mt-10 grid gap-x-14 gap-y-8 md:mt-12 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] lg:items-end">
-        <Reveal>
-          <VideoPlayer t={featured} />
-        </Reveal>
-
-        <Reveal delay={0.1}>
-          <div className="border-border relative border-t pt-6 lg:pb-2">
-            <span aria-hidden className="bg-accent absolute -top-px left-0 h-px w-8" />
-            <p className="text-text-primary font-serif text-xl font-semibold tracking-tight md:text-2xl">
-              {featured.companyUrl ? (
-                <a
-                  href={featured.companyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="link-underline"
-                >
-                  {featured.company}
-                </a>
-              ) : (
-                featured.company
-              )}
-            </p>
-            <p className="text-text-secondary mt-3 max-w-sm leading-relaxed">
-              On camera, in their own words: what working together on their brand site was actually
-              like.
-            </p>
-            {featured.companyUrl && (
-              <a
-                href={featured.companyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-accent hover:text-accent-strong mt-5 inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
-              >
-                View the live site <ArrowUpRight size={14} />
-              </a>
-            )}
-          </div>
-        </Reveal>
+      <div className="mt-10 flex flex-col items-center gap-12 md:mt-12 lg:flex-row lg:items-start lg:justify-center lg:gap-10">
+        {realVideos.map((t, i) => (
+          <VideoCard key={t.id} t={t} delay={i * 0.1} />
+        ))}
       </div>
     </RailSection>
   );
