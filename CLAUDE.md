@@ -399,18 +399,22 @@ Prompts live in data/markup, so they're easy to find and edit:
   source. Referenced by `manifest.ts` (`display: 'browser'`, not `'standalone'`, so Chrome/Edge
   don't prompt visitors to "install" a portfolio site as an app).
 - **OG share image** — `public/images/og-image.jpg`: real 1200×630 generated preview, on-brand.
-- **Foxera video testimonial** — `/public/videos/testimonials/foxera-testimonial.mp4` (+
-  `foxera-poster.jpg`): a real, client-provided on-camera testimonial (46s, re-encoded from
-  118MB to ~4MB). `VideoTestimonials.tsx` is a real click-to-play player (poster +
-  `preload="none"`, so video bytes only download on play); it renders only entries in
-  `src/data/testimonials.ts` with a non-empty `src` and hides itself when there are none (the
-  old `ENABLED` flag is gone). Ledger section `01` on the homepage, deliberately placed
-  right after the hero as the first thing a visitor sees (trust before pitch); unnumbered
-  on `/work`.
-  To add another: re-encode with ffmpeg (`-c:v libx264 -crf 26 -preset slow -vf
-scale=1280:-2 -c:a aac -b:a 128k`, keep the audio), drop video + poster frame into
-  `/public/videos/testimonials/`, add a data entry. Never invent a pull-quote or name the
-  person on camera without client approval.
+- **Client video testimonials** — two real, client-provided on-camera testimonials in
+  `/public/videos/testimonials/`: `foxera-testimonial.mp4` (Foxera Studio, landscape 16:9,
+  re-encoded 118MB → ~4MB) and `fairpath-testimonial.mp4` (Fairpath Healthcare, portrait
+  9:16 phone video, 9.7MB → ~5MB). Each has a `-poster.jpg`. `VideoTestimonials.tsx` is a
+  real click-to-play player (poster + `preload="none"`, so video bytes only download on
+  play); it renders every entry in `src/data/testimonials.ts` with a non-empty `src` and
+  hides itself when there are none (the old `ENABLED` flag is gone). The `orientation` field
+  (`'portrait' | 'landscape'`) drives each clip's frame; on `lg` the clips share a fixed
+  height so a wide and a tall video sit on the same baseline without cropping, and they stack
+  on mobile. Never crop a portrait clip into a landscape frame. Ledger section `01` on the
+  homepage, deliberately right after the hero (trust before pitch); unnumbered on `/work`.
+  To add another: re-encode with ffmpeg (`-c:v libx264 -crf 26 -preset slow -c:a aac -b:a
+128k`, add `-vf scale=1280:-2` only for oversized landscape sources, never upscale a small
+  portrait clip; keep the audio), drop video + a poster frame in, add a data entry with the
+  right `orientation`. Never invent a pull-quote or name the person on camera without
+  client approval.
 
 ### Content placeholders still to replace (clearly marked in code)
 

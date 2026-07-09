@@ -9,6 +9,17 @@ export const videoTestimonials: VideoTestimonial[] = [
     thumbnail: '/videos/testimonials/foxera-poster.jpg',
     company: 'Foxera Studio',
     companyUrl: 'https://foxerastudio.com',
+    orientation: 'landscape',
+    duration: '0:46',
+  },
+  {
+    id: 'vt-fairpath',
+    src: '/videos/testimonials/fairpath-testimonial.mp4',
+    thumbnail: '/videos/testimonials/fairpath-poster.jpg',
+    company: 'Fairpath Healthcare',
+    companyUrl: 'https://www.fairpathhealthcare.com',
+    location: 'Georgia, USA',
+    orientation: 'portrait',
     duration: '0:46',
   },
 ];
