@@ -15,7 +15,7 @@ export const client = createClient({
 //
 //   1. PRIMARY — on-demand revalidation. Every blog read is tagged 'post', and
 //      a Sanity webhook hits `/api/revalidate` on publish/edit/delete, which
-//      calls `revalidateTag('post')`. New content appears near-instantly and we
+//      calls `revalidateTag('post', 'max')`. New content appears near-instantly and we
 //      only refetch when something actually changed, not on a timer.
 //   2. FALLBACK — a long, 1-hour time-based revalidate, so content is never
 //      frozen if the webhook is ever removed or misconfigured. Under traffic

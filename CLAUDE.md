@@ -274,7 +274,7 @@ frozen at build time until a redeploy (they resolved by direct slug, but the hom
 homepage + `/blog/[slug]` segments mirror `export const revalidate = 3600`. The primary refresh
 path is a **Sanity GROQ webhook → `POST /api/revalidate`**: `parseBody` (from
 `next-sanity/webhook`) verifies the signature against `SANITY_REVALIDATE_SECRET`, then
-`revalidateTag('post')` purges all blog reads for a near-instant update on publish/edit. So there
+`revalidateTag('post', 'max')` purges all blog reads for a near-instant update on publish/edit. So there
 is **no per-minute polling** — content refetches only when something actually changes (or once an
 hour as a safety net). To make instant updates work in a given environment, set
 `SANITY_REVALIDATE_SECRET` and add the matching webhook in Sanity Manage → API → Webhooks

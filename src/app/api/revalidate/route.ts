@@ -39,6 +39,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, revalidated: false, reason: 'ignored type' });
   }
 
-  revalidateTag(BLOG_CACHE_TAG);
+  // Next.js 16 requires a cacheLife profile; "max" marks the tag stale and
+  // revalidates in the background (correct for a webhook Route Handler —
+  // updateTag is Server Actions only).
+  revalidateTag(BLOG_CACHE_TAG, 'max');
   return NextResponse.json({ ok: true, revalidated: true, tag: BLOG_CACHE_TAG, now: Date.now() });
 }
