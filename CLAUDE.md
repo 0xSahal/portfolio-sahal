@@ -263,6 +263,25 @@ at `max-w-5xl`) then a two-column body grid (`max-w-6xl`): article prose on the 
 The homepage has a **`LatestPosts`** section (just before `FinalCta`) that fetches the 3 most
 recent posts via `LATEST_POSTS_QUERY` and renders them in a 3-column grid.
 
+**Freshness / caching (read before touching blog fetching).** Blog reads use **tag-based
+on-demand revalidation** (the Sanity + Next best practice for a mostly-static blog), NOT
+`defineLive`'s `sanityFetch`. `sanityFetch` pins every fetch to `revalidate: false` and only
+invalidates via a mounted `<SanityLive />`; this app doesn't mount it, so published posts stayed
+frozen at build time until a redeploy (they resolved by direct slug, but the homepage and
+`/blog` lists never updated). Now every read goes through
+`client.fetch(QUERY, params, blogFetchOptions)` (`sanity/lib/client.ts`), tagged `'post'`
+(`BLOG_CACHE_TAG`) with an **hourly** fallback `revalidate` (`BLOG_REVALIDATE = 3600`), and the
+homepage + `/blog/[slug]` segments mirror `export const revalidate = 3600`. The primary refresh
+path is a **Sanity GROQ webhook → `POST /api/revalidate`**: `parseBody` (from
+`next-sanity/webhook`) verifies the signature against `SANITY_REVALIDATE_SECRET`, then
+`revalidateTag('post', 'max')` purges all blog reads for a near-instant update on publish/edit. So there
+is **no per-minute polling** — content refetches only when something actually changes (or once an
+hour as a safety net). To make instant updates work in a given environment, set
+`SANITY_REVALIDATE_SECRET` and add the matching webhook in Sanity Manage → API → Webhooks
+(URL `https://<site>/api/revalidate`, filter `_type == "post"`, same secret). Don't switch these
+reads back to `sanityFetch` unless you also mount `<SanityLive />`. `lib/live.ts` is kept but
+unused (its comment explains why).
+
 - **The Studio is a separate project, NOT in this repo** — it lives in the sibling
   folder `../sahal-studio` and is deployed to Sanity hosting (`*.sanity.studio`).
   Edit schema there, then `npm run deploy`. Keep its field names in sync with

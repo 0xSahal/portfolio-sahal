@@ -10,6 +10,11 @@ import Faq from '@/components/sections/Faq';
 import LatestPosts from '@/components/sections/LatestPosts';
 import FinalCta from '@/components/sections/FinalCta';
 
+// Hourly fallback so the LatestPosts strip is never frozen; the Sanity webhook
+// at /api/revalidate purges the 'post' tag on publish for near-instant updates.
+// Keep in sync with BLOG_REVALIDATE in sanity/lib/client.ts.
+export const revalidate = 3600;
+
 export default function PortfolioPage() {
   return (
     <>
