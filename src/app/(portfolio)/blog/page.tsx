@@ -5,7 +5,7 @@ import Reveal from '@/components/ui/Reveal';
 import PostCard from '@/components/blog/PostCard';
 import Pagination from '@/components/blog/Pagination';
 import JsonLd from '@/components/seo/JsonLd';
-import { sanityFetch } from '@/sanity/lib/live';
+import { client, blogFetchOptions } from '@/sanity/lib/client';
 import { POSTS_QUERY, POSTS_COUNT_QUERY } from '@/sanity/lib/queries';
 import { pageMetadata, breadcrumbJsonLd } from '@/lib/seo';
 import type { PostCard as PostCardType } from '@/sanity/types';
@@ -29,9 +29,9 @@ export default async function BlogPage({
   const start = (page - 1) * PER_PAGE;
   const end = start + PER_PAGE;
 
-  const [{ data: posts }, { data: total }] = await Promise.all([
-    sanityFetch({ query: POSTS_QUERY, params: { start, end } }),
-    sanityFetch({ query: POSTS_COUNT_QUERY }),
+  const [posts, total] = await Promise.all([
+    client.fetch(POSTS_QUERY, { start, end }, blogFetchOptions),
+    client.fetch(POSTS_COUNT_QUERY, {}, blogFetchOptions),
   ]);
 
   const list = (posts ?? []) as PostCardType[];

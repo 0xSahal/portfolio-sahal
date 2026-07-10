@@ -9,8 +9,7 @@ import PortableTextBody from '@/components/blog/PortableTextBody';
 import TableOfContents from '@/components/blog/TableOfContents';
 import ShareButtons from '@/components/blog/ShareButtons';
 import PostCard from '@/components/blog/PostCard';
-import { sanityFetch } from '@/sanity/lib/live';
-import { client } from '@/sanity/lib/client';
+import { client, blogFetchOptions } from '@/sanity/lib/client';
 import { urlFor } from '@/sanity/lib/image';
 import { POST_QUERY, POST_SLUGS_QUERY, RELATED_POSTS_QUERY } from '@/sanity/lib/queries';
 import { estimateReadingTime, extractHeadings, formatDate } from '@/lib/blog';
@@ -18,6 +17,13 @@ import { breadcrumbJsonLd } from '@/lib/seo';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
 import type { PostFull, PostCard as PostCardType } from '@/sanity/types';
+
+// Existing posts are prerendered at build; brand-new slugs render on demand
+// (dynamicParams defaults to true). The Sanity webhook at /api/revalidate
+// purges the 'post' tag on publish/edit for near-instant refresh; this hourly
+// value is only a fallback. Keep in sync with BLOG_REVALIDATE in
+// sanity/lib/client.ts.
+export const revalidate = 3600;
 
 export async function generateStaticParams() {
   const slugs = await client
@@ -32,7 +38,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = await client.fetch<PostFull | null>(POST_QUERY, { slug });
+  const post = await client.fetch<PostFull | null>(POST_QUERY, { slug }, blogFetchOptions);
   if (!post) return { title: 'Not found' };
 
   const title = post.metaTitle ?? post.title;
@@ -67,14 +73,11 @@ export async function generateMetadata({
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const { data } = await sanityFetch({ query: POST_QUERY, params: { slug } });
+  const data = await client.fetch(POST_QUERY, { slug }, blogFetchOptions);
   const post = data as PostFull | null;
   if (!post) notFound();
 
-  const { data: relatedData } = await sanityFetch({
-    query: RELATED_POSTS_QUERY,
-    params: { slug },
-  });
+  const relatedData = await client.fetch(RELATED_POSTS_QUERY, { slug }, blogFetchOptions);
   const related = (relatedData ?? []) as PostCardType[];
 
   const readingTime = estimateReadingTime(post.body);

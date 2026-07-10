@@ -6,7 +6,7 @@ import RailSection from '@/components/ui/RailSection';
 import Reveal from '@/components/ui/Reveal';
 import { urlFor } from '@/sanity/lib/image';
 import { formatDate } from '@/lib/blog';
-import { sanityFetch } from '@/sanity/lib/live';
+import { client, blogFetchOptions } from '@/sanity/lib/client';
 import { LATEST_POSTS_QUERY } from '@/sanity/lib/queries';
 import type { PostCard as PostCardType } from '@/sanity/types';
 
@@ -49,7 +49,7 @@ function PostEntry({ post }: { post: PostCardType }) {
 }
 
 export default async function LatestPosts() {
-  const { data } = await sanityFetch({ query: LATEST_POSTS_QUERY });
+  const data = await client.fetch(LATEST_POSTS_QUERY, {}, blogFetchOptions);
   const posts = (data ?? []) as PostCardType[];
 
   if (!posts.length) return null;
